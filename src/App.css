@@ -1,0 +1,11 @@
+/* App.css - App-level overrides and react-toastify customization */
+.Toastify__toast {
+  border-radius: var(--radius-lg) !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 14px !important;
+}
+
+.Toastify__toast--success { background: var(--success) !important; }
+.Toastify__toast--error { background: var(--error) !important; }
+.Toastify__toast--info { background: var(--primary) !important; }
+.Toastify__toast--warning { background: var(--warning) !important; }

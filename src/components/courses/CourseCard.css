@@ -1,0 +1,372 @@
+.course-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  height: 100%;
+}
+
+.course-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+  border-color: #d1d5db;
+}
+
+/* ========== THUMBNAIL ========== */
+.course-thumbnail {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.course-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.course-card:hover .course-thumbnail img {
+  transform: scale(1.08);
+}
+
+.course-thumbnail-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  font-size: 48px;
+  color: #d1d5db;
+}
+
+/* ========== OVERLAY ========== */
+.course-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.course-card:hover .course-overlay {
+  opacity: 1;
+}
+
+.course-overlay .btn {
+  backdrop-filter: blur(10px);
+}
+
+/* ========== DISCOUNT BADGE ========== */
+.course-discount-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ef4444;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* ========== WISHLIST BUTTON ========== */
+.wishlist-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #999;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+}
+
+.wishlist-btn:hover {
+  background: white;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.wishlist-btn.active {
+  background: #ef4444;
+  color: white;
+}
+
+.wishlist-btn.active:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========== COURSE INFO ========== */
+.course-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.course-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+}
+
+.badge-warning {
+  background: rgba(251, 146, 60, 0.1);
+  color: #c2410c;
+}
+
+.badge-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.badge-gray {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.course-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.course-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.course-instructor {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+/* ========== RATING ========== */
+.course-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.rating-value {
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 12px;
+  color: #d1d5db;
+}
+
+.star-full {
+  color: #fbbf24;
+}
+
+.star-half {
+  background: linear-gradient(90deg, #fbbf24 50%, #d1d5db 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rating-count {
+  color: #999;
+  font-size: 12px;
+}
+
+/* ========== STATS ========== */
+.course-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #666;
+  flex-wrap: wrap;
+}
+
+/* ========== PRICE ========== */
+.course-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.price-current {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.price-original {
+  font-size: 13px;
+  color: #999;
+  text-decoration: line-through;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 640px) {
+  .course-card {
+    border-radius: 6px;
+  }
+
+  .course-info {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .course-title {
+    font-size: 13px;
+  }
+
+  .course-rating {
+    font-size: 12px;
+  }
+
+  .price-current {
+    font-size: 15px;
+  }
+}
+
+.course-desc {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.course-instructor {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Rating */
+.course-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rating-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--warning);
+}
+
+.stars {
+  display: flex;
+  gap: 1px;
+}
+
+.star {
+  font-size: 12px;
+  color: var(--gray-300);
+}
+
+.star-full, .star-half {
+  color: var(--warning);
+}
+
+.rating-count {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Stats */
+.course-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Price */
+.course-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.price-current {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.price-original {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+}

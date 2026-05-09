@@ -1,0 +1,10 @@
+.main-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  margin-top: var(--navbar-height);
+  flex: 1;
+}

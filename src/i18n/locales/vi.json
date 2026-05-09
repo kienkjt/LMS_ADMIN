@@ -1,0 +1,292 @@
+{
+  "validation": {
+    "email": {
+      "notBlank": "Email không được để trống",
+      "invalid": "Email không hợp lệ"
+    },
+    "password": {
+      "notBlank": "Mật khẩu không được để trống",
+      "size": "Mật khẩu phải có ít nhất 8 ký tự",
+      "pattern": "Mật khẩu phải chứa ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt"
+    },
+    "confirmPassword": {
+      "notBlank": "Xác nhận mật khẩu không được để trống",
+      "match": "Xác nhận mật khẩu phải khớp với mật khẩu"
+    },
+    "currentPassword": {
+      "notBlank": "Mật khẩu hiện tại không được để trống"
+    },
+    "name": {
+      "notBlank": "Tên không được để trống",
+      "size": "Tên phải có ít nhất 2 ký tự"
+    },
+    "role": {
+      "notBlank": "Vai trò không được để trống",
+      "invalid": "Vai trò không hợp lệ"
+    },
+    "otp": {
+      "notBlank": "OTP không được để trống",
+      "size": "OTP phải có 6 chữ số",
+      "pattern": "OTP phải chỉ chứa chữ số"
+    },
+    "refreshToken": {
+      "notBlank": "Refresh token không được để trống",
+      "invalid": "Refresh token không hợp lệ"
+    },
+    "title": {
+      "notBlank": "Tiêu đề khóa học không được để trống",
+      "size": "Tiêu đề phải từ 5 đến 200 ký tự"
+    },
+    "shortDescription": {
+      "notBlank": "Mô tả ngắn không được để trống",
+      "size": "Mô tả ngắn phải từ 10 đến 1000 ký tự"
+    },
+    "fullDescription": {
+      "size": "Mô tả đầy đủ không được vượt quá 5000 ký tự"
+    },
+    "thumbnail": {
+      "size": "Thumbnail URL không được vượt quá 500 ký tự"
+    },
+    "previewVideoUrl": {
+      "size": "Preview video URL không được vượt quá 500 ký tự"
+    },
+    "price": {
+      "notNull": "Giá không được để trống",
+      "min": "Giá không được âm",
+      "max": "Giá không được vượt quá 999999.99"
+    },
+    "discountPrice": {
+      "min": "Giá khuyến mãi không được âm",
+      "max": "Giá khuyến mãi không được vượt quá 999999.99"
+    },
+    "level": {
+      "notNull": "Cấp độ khóa học không được để trống"
+    },
+    "language": {
+      "size": "Ngôn ngữ không được vượt quá 50 ký tự"
+    },
+    "certificate": {
+      "size": "Chứng chỉ không được vượt quá 100 ký tự"
+    },
+    "requirements": {
+      "size": "Yêu cầu không được vượt quá 2000 ký tự"
+    },
+    "whatYouWillLearn": {
+      "size": "Những gì bạn sẽ học không được vượt quá 2000 ký tự"
+    },
+    "chapter": {
+      "title": {
+        "notBlank": "Tiêu đề chương không được để trống",
+        "size": "Tiêu đề chương phải từ 3 đến 200 ký tự"
+      },
+      "description": {
+        "size": "Mô tả chương không được vượt quá 2000 ký tự"
+      }
+    },
+    "lesson": {
+      "title": {
+        "notBlank": "Tiêu đề bài học không được để trống",
+        "size": "Tiêu đề bài học phải từ 3 đến 200 ký tự"
+      },
+      "description": {
+        "size": "Mô tả bài học không được vượt quá 2000 ký tự"
+      },
+      "type": {
+        "notNull": "Loại bài học không được để trống"
+      },
+      "videoUrl": {
+        "size": "Video URL của bài học không được vượt quá 500 ký tự"
+      },
+      "videoPublicId": {
+        "size": "Video public ID của bài học không được vượt quá 500 ký tự"
+      },
+      "duration": {
+        "notNull": "Thời lượng bài học không được để trống",
+        "min": "Thời lượng bài học phải lớn hơn hoặc bằng 0"
+      },
+      "freePreview": {
+        "notNull": "Cờ xem trước miễn phí không được để trống"
+      }
+    },
+    "category": {
+      "name": {
+        "notBlank": "Tên danh mục không được để trống",
+        "size": "Tên danh mục không được vượt quá 100 ký tự"
+      },
+      "description": {
+        "size": "Mô tả danh mục không được vượt quá 2000 ký tự"
+      },
+      "thumbnail": {
+        "size": "Thumbnail URL danh mục không được vượt quá 500 ký tự"
+      }
+    },
+    "rejectReason": {
+      "notBlank": "Lý do từ chối không được để trống",
+      "size": "Lý do từ chối phải từ 10 đến 500 ký tự"
+    },
+    "profile": {
+      "fullName": {
+        "size": "Họ tên phải từ 2 đến 100 ký tự"
+      },
+      "phoneNumber": {
+        "invalid": "Số điện thoại phải có 9 đến 15 chữ số và có thể bắt đầu bằng +"
+      },
+      "bio": {
+        "size": "Giới thiệu không được vượt quá 2000 ký tự"
+      },
+      "avatar": {
+        "required": "Vui lòng chọn ảnh đại diện",
+        "maxSize": "Kích thước ảnh đại diện không được vượt quá {{size}} byte",
+        "invalidType": "Ảnh đại diện chỉ hỗ trợ JPG, PNG hoặc WEBP"
+      }
+    }
+  },
+  "auth": {
+    "register": {
+      "success": "Đăng ký thành công. Vui lòng kiểm tra email của bạn để lấy OTP.",
+      "emailExists": "Email đã được đăng ký",
+      "roleNotFound": "Vai trò được chọn không hợp lệ"
+    },
+    "login": {
+      "success": "Đăng nhập thành công",
+      "emailNotFound": "Người dùng không tồn tại",
+      "invalidCredentials": "Email hoặc mật khẩu không hợp lệ",
+      "notVerified": "Tài khoản chưa được xác thực. Vui lòng xác thực email trước.",
+      "inactive": "Tài khoản đã bị vô hiệu hóa"
+    },
+    "logout": {
+      "success": "Đăng xuất thành công"
+    },
+    "refresh": {
+      "success": "Token đã được làm mới",
+      "invalid": "Refresh token không hợp lệ",
+      "accountInactive": "Tài khoản không hoạt động"
+    },
+    "verifyOtp": {
+      "success": "Tài khoản đã được xác thực thành công",
+      "invalid": "OTP không hợp lệ"
+    },
+    "forgotPassword": {
+      "success": "OTP reset mật khẩu đã được gửi đến email của bạn",
+      "userNotFound": "Người dùng không tồn tại"
+    },
+    "verifyResetOtp": {
+      "success": "OTP đã được xác thực",
+      "invalid": "OTP không hợp lệ"
+    },
+    "resetPassword": {
+      "success": "Mật khẩu đã được reset thành công",
+      "otpNotVerified": "Vui lòng xác thực OTP đặt lại mật khẩu trước khi đổi mật khẩu"
+    }
+  },
+  "otp": {
+    "expired": "OTP đã hết hạn. Vui lòng yêu cầu một OTP mới.",
+    "maxAttemptsExceeded": "Đã vượt quá số lần thử tối đa. Vui lòng yêu cầu một OTP mới.",
+    "invalid": "OTP không hợp lệ. Bạn còn {{attempts}} lần thử.",
+    "rateLimitExceeded": "Quá nhiều yêu cầu. Vui lòng thử lại sau."
+  },
+  "user": {
+    "notFound": "Người dùng không được tìm thấy",
+    "invalidCurrentPassword": "Mật khẩu hiện tại không chính xác",
+    "passwordsDoNotMatch": "Mật khẩu mới không khớp với xác nhận mật khẩu",
+    "passwordChanged": "Mật khẩu đã được thay đổi thành công"
+  },
+  "course": {
+    "notFound": "Khóa học không được tìm thấy",
+    "notOwner": "Bạn không phải là chủ sở hữu của khóa học này",
+    "alreadyApproved": "Khóa học đã được phê duyệt rồi",
+    "alreadyPublished": "Khóa học đã được xuất bản rồi",
+    "created": "Khóa học đã được tạo thành công",
+    "updated": "Khóa học đã được cập nhật thành công",
+    "published": "Khóa học đã được xuất bản thành công",
+    "unpublished": "Khóa học đã được hủy xuất bản thành công",
+    "deleted": "Khóa học đã được xóa thành công",
+    "approved": "Khóa học đã được phê duyệt thành công",
+    "rejected": "Khóa học đã bị từ chối"
+  },
+  "chapter": {
+    "notFound": "Chương học không được tìm thấy",
+    "notBelongToCourse": "Chương học không thuộc khóa học đã chọn",
+    "duplicateTitle": "Tiêu đề chương đã tồn tại trong khóa học này",
+    "created": "Tạo chương học thành công",
+    "updated": "Cập nhật chương học thành công",
+    "deleted": "Xóa chương học thành công"
+  },
+  "lesson": {
+    "notFound": "Bài học không được tìm thấy",
+    "duplicateTitle": "Tiêu đề bài học đã tồn tại trong chương này",
+    "notBelongToChapter": "Bài học không thuộc chương đã chọn",
+    "created": "Tạo bài học thành công",
+    "updated": "Cập nhật bài học thành công",
+    "deleted": "Xóa bài học thành công"
+  },
+  "category": {
+    "notFound": "Danh mục không được tìm thấy",
+    "duplicateName": "Tên danh mục đã tồn tại",
+    "inUse": "Danh mục đang được sử dụng bởi khóa học nên không thể xóa",
+    "created": "Danh mục đã được tạo thành công",
+    "updated": "Danh mục đã được cập nhật thành công",
+    "deleted": "Danh mục đã được xóa thành công"
+  },
+  "profile": {
+    "updated": "Cập nhật thông tin cá nhân thành công",
+    "avatarUploadSuccess": "Tải ảnh đại diện thành công",
+    "avatarUploadFailed": "Tải ảnh đại diện thất bại",
+    "avatarDeletedSuccess": "Xóa ảnh đại diện thành công"
+  },
+  "errors": {
+    "INVALID_EMAIL": "Email không hợp lệ",
+    "INVALID_PASSWORD": "Mật khẩu không hợp lệ",
+    "USER_NOT_FOUND": "Người dùng không tồn tại",
+    "USER_ALREADY_EXISTS": "Người dùng đã tồn tại",
+    "INVALID_TOKEN": "Token không hợp lệ",
+    "TOKEN_EXPIRED": "Token đã hết hạn",
+    "UNAUTHORIZED": "Bạn không có quyền truy cập",
+    "FORBIDDEN": "Truy cập bị từ chối",
+    "NOT_FOUND": "Không tìm thấy",
+    "INTERNAL_SERVER_ERROR": "Lỗi máy chủ",
+    "BAD_REQUEST": "Yêu cầu không hợp lệ",
+    "NETWORK_ERROR": "Lỗi kết nối mạng",
+    "COURSE_NOT_FOUND": "Khóa học không tồn tại",
+    "ENROLLMENT_NOT_FOUND": "Đăng ký không tồn tại",
+    "ALREADY_ENROLLED": "Bạn đã đăng ký khóa học này",
+    "CANNOT_ENROLL_OWN_COURSE": "Bạn không thể đăng ký khóa học của chính mình",
+    "INVALID_COURSE_DATA": "Dữ liệu khóa học không hợp lệ",
+    "UPLOAD_FAILED": "Tải lên thất bại",
+    "FILE_TOO_LARGE": "Tệp quá lớn",
+    "INVALID_FILE_TYPE": "Loại tệp không hợp lệ",
+    "PASSWORD_TOO_WEAK": "Mật khẩu quá yếu",
+    "PASSWORDS_NOT_MATCH": "Mật khẩu không khớp",
+    "CURRENT_PASSWORD_INVALID": "Mật khẩu hiện tại không chính xác",
+    "OTP_INVALID": "Mã OTP không hợp lệ",
+    "OTP_EXPIRED": "Mã OTP đã hết hạn",
+    "EMAIL_NOT_VERIFIED": "Email chưa được xác minh",
+    "PAYMENT_FAILED": "Thanh toán thất bại",
+    "PAYMENT_TIMEOUT": "Thanh toán hết thời gian chờ",
+    "INVALID_COUPON": "Mã giảm giá không hợp lệ",
+    "COUPON_EXPIRED": "Mã giảm giá đã hết hạn"
+  },
+  "success": {
+    "LOGIN_SUCCESS": "Đăng nhập thành công",
+    "REGISTER_SUCCESS": "Đăng ký thành công",
+    "LOGOUT_SUCCESS": "Đăng xuất thành công",
+    "PASSWORD_CHANGED": "Mật khẩu đã được đổi",
+    "PROFILE_UPDATED": "Hồ sơ đã được cập nhật",
+    "EMAIL_VERIFIED": "Email đã được xác minh",
+    "EMAIL_SENT": "Email đã được gửi",
+    "ENROLLMENT_SUCCESS": "Đăng ký khóa học thành công",
+    "COURSE_CREATED": "Tạo khóa học thành công",
+    "COURSE_UPDATED": "Cập nhật khóa học thành công",
+    "COURSE_DELETED": "Xóa khóa học thành công",
+    "ADDED_TO_CART": "Thêm vào giỏ hàng thành công",
+    "REMOVED_FROM_CART": "Xóa khỏi giỏ hàng thành công",
+    "ORDER_PLACED": "Đặt hàng thành công",
+    "PAYMENT_SUCCESS": "Thanh toán thành công",
+    "REVIEW_POSTED": "Đánh giá đã được đăng"
+  },
+  "warnings": {
+    "SESSION_EXPIRING": "Phiên của bạn sắp hết hạn",
+    "INCOMPLETE_PROFILE": "Hồ sơ của bạn chưa hoàn chỉnh",
+    "NO_COURSES": "Bạn chưa có khóa học nào"
+  }
+}

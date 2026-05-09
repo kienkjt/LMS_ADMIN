@@ -1,0 +1,404 @@
+.video-player-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 24px;
+}
+
+.video-player-container.error {
+  height: 400px;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-player-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.video-player-container.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  padding-bottom: 0;
+  z-index: 9999;
+  border-radius: 0;
+}
+
+.video-player-container.fullscreen video {
+  position: fixed;
+}
+
+/* Error state */
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  gap: 16px;
+}
+
+.error-message svg {
+  opacity: 0.5;
+}
+
+.error-message p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Loading indicator */
+.loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Play overlay */
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  color: white;
+  transition: all 0.3s;
+}
+
+.play-overlay:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Controls */
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 40px 12px 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 20;
+}
+
+.video-controls.visible {
+  opacity: 1;
+}
+
+/* Progress bar */
+.progress-container {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+}
+
+.progress-bar:hover {
+  background: rgba(255, 255, 255, 0.5);
+  height: 6px;
+}
+
+.progress-bar::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.progress-bar::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Controls bottom */
+.controls-bottom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  font-size: 14px;
+}
+
+.controls-left,
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls-left {
+  flex: 0;
+}
+
+.controls-right {
+  flex: 0;
+  margin-left: auto;
+}
+
+.video-title {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+/* Control buttons */
+.control-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Volume control */
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-slider {
+  width: 60px;
+  height: 3px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+}
+
+.volume-slider:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+}
+
+/* Time display */
+.time-display {
+  font-size: 12px;
+  margin-left: 8px;
+  min-width: 60px;
+}
+
+/* Playback speed control */
+.playback-speed-control {
+  position: relative;
+  display: inline-block;
+}
+
+.playback-btn {
+  min-width: 40px;
+  padding: 6px 8px !important;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.speed-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  padding: 4px 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  z-index: 100;
+  min-width: 60px;
+}
+
+.playback-speed-control:hover .speed-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+.speed-option {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  display: block;
+  width: 100%;
+  text-align: right;
+  transition: all 0.2s;
+}
+
+.speed-option:hover,
+.speed-option.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #4a9eff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .video-controls {
+    padding: 30px 8px 8px;
+  }
+
+  .controls-bottom {
+    gap: 4px;
+  }
+
+  .controls-left,
+  .controls-right {
+    gap: 0;
+  }
+
+  .control-btn {
+    padding: 6px;
+  }
+
+  .time-display {
+    font-size: 11px;
+    margin-left: 4px;
+    min-width: 50px;
+  }
+
+  .video-title {
+    font-size: 11px;
+    max-width: 150px;
+  }
+
+  .volume-slider {
+    width: 40px;
+  }
+
+  .playback-btn {
+    padding: 4px 6px !important;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-controls {
+    padding: 25px 6px 6px;
+  }
+
+  .controls-left,
+  .controls-right {
+    gap: 0;
+  }
+
+  .control-btn {
+    padding: 4px;
+  }
+
+  .volume-control {
+    display: none;
+  }
+
+  .time-display {
+    display: none;
+  }
+
+  .video-title {
+    display: none;
+  }
+
+  .playback-btn {
+    min-width: 32px;
+  }
+}
