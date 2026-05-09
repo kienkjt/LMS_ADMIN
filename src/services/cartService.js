@@ -11,7 +11,7 @@ export const cartService = {
   getCart: async () => {
     try {
       console.log('[cartService.getCart] Fetching cart from backend');
-      const response = await api.get('/api/v1/cart');
+      const response = await api.get('/v1/cart');
       const cart = response.data?.data || response.data;
       console.log('[cartService.getCart] Success');
       return { data: cart };
@@ -31,7 +31,7 @@ export const cartService = {
   addItem: async (courseId) => {
     try {
       console.log('[cartService.addItem] Adding course to cart:', courseId);
-      const response = await api.post('/api/v1/cart/add', { courseId });
+      const response = await api.post('/v1/cart/add', { courseId });
       const cart = response.data?.data || response.data;
       console.log('[cartService.addItem] Success');
       return { data: cart };
@@ -62,7 +62,7 @@ export const cartService = {
   removeItem: async (cartItemId) => {
     try {
       console.log('[cartService.removeItem] Removing from cart:', cartItemId);
-      const response = await api.delete(`/api/v1/cart/items/${cartItemId}`);
+      const response = await api.delete(`/v1/cart/items/${cartItemId}`);
       const cart = response.data?.data || response.data;
       console.log('[cartService.removeItem] Success');
       return { data: cart };
@@ -84,7 +84,7 @@ export const cartService = {
   clearCart: async () => {
     try {
       console.log('[cartService.clearCart] Clearing cart');
-      const response = await api.delete('/api/v1/cart/clear');
+      const response = await api.delete('/v1/cart/clear');
       console.log('[cartService.clearCart] Success');
       return { data: response.data?.data || response.data || { message: 'Xóa toàn bộ giỏ hàng thành công' } };
     } catch (error) {

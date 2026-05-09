@@ -23,7 +23,7 @@ export const chapterService = {
   createChapter: async (courseId, data) => {
     try {
       console.log('[chapterService.createChapter] Creating chapter for course:', courseId);
-      const response = await api.post(`/api/v1/courses/${courseId}/chapters`, {
+      const response = await api.post(`/v1/courses/${courseId}/chapters`, {
         title: data.title,
         description: data.description || '',
       });
@@ -44,7 +44,7 @@ export const chapterService = {
   getChaptersByCourse: async (courseId) => {
     try {
       console.log('[chapterService.getChaptersByCourse] Fetching chapters for course:', courseId);
-      const response = await api.get(`/api/v1/courses/${courseId}/chapters`);
+      const response = await api.get(`/v1/courses/${courseId}/chapters`);
       const chapters = response.data?.data || response.data || [];
       console.log('[chapterService.getChaptersByCourse] Success, found:', chapters.length);
       return { data: chapters };
@@ -63,7 +63,7 @@ export const chapterService = {
   getChapterById: async (courseId, chapterId) => {
     try {
       console.log('[chapterService.getChapterById] Fetching chapter:', chapterId);
-      const response = await api.get(`/api/v1/courses/${courseId}/chapters/${chapterId}`);
+      const response = await api.get(`/v1/courses/${courseId}/chapters/${chapterId}`);
       const chapter = response.data?.data || response.data;
       console.log('[chapterService.getChapterById] Success');
       return { data: chapter };
@@ -83,7 +83,7 @@ export const chapterService = {
   updateChapter: async (courseId, chapterId, data) => {
     try {
       console.log('[chapterService.updateChapter] Updating chapter:', chapterId);
-      const response = await api.put(`/api/v1/courses/${courseId}/chapters/${chapterId}`, {
+      const response = await api.put(`/v1/courses/${courseId}/chapters/${chapterId}`, {
         title: data.title,
         description: data.description || '',
       });
@@ -106,7 +106,7 @@ export const chapterService = {
     try {
       console.log('[chapterService.deleteChapter] Deleting chapter:', chapterId);
       // Backend uses POST for delete
-      const response = await api.post(`/api/v1/courses/${courseId}/chapters/${chapterId}`);
+      const response = await api.post(`/v1/courses/${courseId}/chapters/${chapterId}`);
       console.log('[chapterService.deleteChapter] Success');
       return { data: response.data?.data || response.data || { message: 'Xóa chương thành công' } };
     } catch (error) {

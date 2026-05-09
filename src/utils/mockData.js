@@ -28,7 +28,7 @@ export const mockUsers = {
 };
 
 // ========== MOCK CATEGORIES ==========
-// Simulates backend response structure: GET /api/v1/categories
+// Simulates backend response structure: GET /v1/categories
 export const mockCategories = [
   { id: 1, name: 'Lập trình Web', description: 'Học web development', createdAt: '2024-01-01T00:00:00', updatedAt: '2024-01-01T00:00:00', createdById: 'user-1', updatedById: 'user-1' },
   { id: 2, name: 'Lập trình Mobile', description: 'Học mobile development', createdAt: '2024-01-01T00:00:00', updatedAt: '2024-01-01T00:00:00', createdById: 'user-1', updatedById: 'user-1' },

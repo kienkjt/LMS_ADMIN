@@ -50,12 +50,12 @@ export const courseService = {
       const page = resolvePage(params?.page);
       const size = resolveSize(params?.size);
       console.log('[courseService.getAll] Fetching from backend API...');
-      const response = await api.get(`/api/v1/courses?page=${page}&size=${size}`);
-      
+      const response = await api.get(`/v1/courses?page=${page}&size=${size}`);
+
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const totalElements = pageData?.totalElements || 0;
-      
+
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
       console.log('[courseService.getAll] Result:', { content: content.length, total: totalElements });
       return { data: { content, totalElements } };
@@ -73,7 +73,7 @@ export const courseService = {
   getById: async (id) => {
     try {
       console.log('[courseService.getById] Fetching from backend API:', id);
-      const response = await api.get(`/api/v1/courses/${id}`);
+      const response = await api.get(`/v1/courses/${id}`);
       const course = response.data?.data || response.data;
       const result = formatCourseForCard(course);
       console.log('[courseService.getById] Result:', result.id);
@@ -90,7 +90,7 @@ export const courseService = {
   getBySlug: async (slug) => {
     try {
       console.log('[courseService.getBySlug] Fetching from backend API:', slug);
-      const response = await api.get(`/api/v1/courses/slug/${slug}`);
+      const response = await api.get(`/v1/courses/slug/${slug}`);
       const course = response.data?.data || response.data;
       const result = formatCourseForCard(course);
       console.log('[courseService.getBySlug] Result:', result.id);
@@ -107,7 +107,7 @@ export const courseService = {
   create: async (data) => {
     try {
       console.log('[courseService.create] Creating course via backend API...');
-      const response = await api.post('/api/v1/courses', data);
+      const response = await api.post('/v1/courses', data);
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {
@@ -120,7 +120,7 @@ export const courseService = {
   update: async (id, data) => {
     try {
       console.log('[courseService.update] Updating course via backend API:', id);
-      const response = await api.put(`/api/v1/courses/${id}`, data);
+      const response = await api.put(`/v1/courses/${id}`, data);
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {
@@ -134,7 +134,7 @@ export const courseService = {
     try {
       console.log('[courseService.delete] Deleting course via backend API:', id);
       // Backend uses POST for delete, not DELETE verb
-      const response = await api.post(`/api/v1/courses/${id}`);
+      const response = await api.post(`/v1/courses/${id}`);
       return { data: response.data?.data || response.data || { message: 'Xóa khóa học thành công' } };
     } catch (error) {
       console.error('[courseService.delete] API error:', error);
@@ -163,20 +163,20 @@ export const courseService = {
       params.append('page', page);
       params.append('size', size);
 
-      console.log('[courseService.search] Calling backend API POST /api/v1/courses/search with:', searchRequest);
+      console.log('[courseService.search] Calling backend API POST /v1/courses/search with:', searchRequest);
       // Backend uses POST endpoint for advanced search
-      const response = await api.post(`/api/v1/courses/search?${params.toString()}`, searchRequest);
-      
+      const response = await api.post(`/v1/courses/search?${params.toString()}`, searchRequest);
+
       console.log('[courseService.search] API response:', response);
-      
+
       // Handle response format: { success, code, data: { content, totalElements } }
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const totalElements = pageData?.totalElements || 0;
-      
+
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
       console.log('[courseService.search] Formatted result:', { content: content.length, total: totalElements });
-      
+
       return { data: { content, totalElements } };
     } catch (error) {
       console.error('[courseService.search] API error, falling back to mock data:', error);
@@ -217,7 +217,7 @@ export const courseService = {
   getPopular: async () => {
     try {
       console.log('[courseService.getPopular] Fetching trending courses from backend API...');
-      const response = await api.get('/api/v1/courses/trending?page=1&size=8');
+      const response = await api.get('/v1/courses/trending?page=1&size=8');
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || pageData || [];
       const result = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
@@ -234,7 +234,7 @@ export const courseService = {
   getNewest: async () => {
     try {
       console.log('[courseService.getNewest] Fetching courses from backend API...');
-      const response = await api.get('/api/v1/courses?page=1&size=4');
+      const response = await api.get('/v1/courses?page=1&size=4');
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || pageData || [];
       const result = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
@@ -254,12 +254,12 @@ export const courseService = {
       const size = resolveSize(params?.size);
       console.log('[courseService.getByCategory] Fetching from backend API:', categoryId);
       // Backend uses /by-category/{categoryId} endpoint
-      const response = await api.get(`/api/v1/courses/by-category/${categoryId}?page=${page}&size=${size}`);
-      
+      const response = await api.get(`/v1/courses/by-category/${categoryId}?page=${page}&size=${size}`);
+
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const totalElements = pageData?.totalElements || 0;
-      
+
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
       console.log('[courseService.getByCategory] Result:', { content: content.length, total: totalElements });
       return { data: { content, totalElements } };
@@ -279,12 +279,12 @@ export const courseService = {
       const page = resolvePage(params?.page);
       const size = resolveSize(params?.size);
       console.log('[courseService.getByInstructor] Fetching from backend API - my courses...');
-      const response = await api.get(`/api/v1/courses/my-courses?page=${page}&size=${size}`);
-      
+      const response = await api.get(`/v1/courses/my-courses?page=${page}&size=${size}`);
+
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const totalElements = pageData?.totalElements || 0;
-      
+
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
       console.log('[courseService.getByInstructor] Result:', { content: content.length, total: totalElements });
       return { data: { content, totalElements } };
@@ -304,12 +304,12 @@ export const courseService = {
       const page = resolvePage(params?.page);
       const size = resolveSize(params?.size, 20);
       console.log('[courseService.getMyInstructorCourses] Fetching from backend API...');
-      const response = await api.get(`/api/v1/courses/my-courses?page=${page}&size=${size}`);
-      
+      const response = await api.get(`/v1/courses/my-courses?page=${page}&size=${size}`);
+
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const totalElements = pageData?.totalElements || 0;
-      
+
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
       console.log('[courseService.getMyInstructorCourses] Result:', { content: content.length, total: totalElements });
       return { data: { content, totalElements } };
@@ -325,8 +325,8 @@ export const courseService = {
       const page = resolvePage(params?.page);
       const size = resolveSize(params?.size, 20);
       console.log('[courseService.getTrendingCourses] Fetching from backend API...');
-      const response = await api.get(`/api/v1/courses/trending?page=${page}&size=${size}`);
-      
+      const response = await api.get(`/v1/courses/trending?page=${page}&size=${size}`);
+
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
@@ -344,8 +344,8 @@ export const courseService = {
       const page = resolvePage(params?.page);
       const size = resolveSize(params?.size, 20);
       console.log('[courseService.getTopRatedCourses] Fetching from backend API...');
-      const response = await api.get(`/api/v1/courses/top-rated?page=${page}&size=${size}`);
-      
+      const response = await api.get(`/v1/courses/top-rated?page=${page}&size=${size}`);
+
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
@@ -363,12 +363,12 @@ export const courseService = {
       const page = resolvePage(params?.page);
       const size = resolveSize(params?.size, 20);
       console.log('[courseService.advancedSearch] Searching from backend API...');
-      const response = await api.post(`/api/v1/courses/search?page=${page}&size=${size}`, request);
-      
+      const response = await api.post(`/v1/courses/search?page=${page}&size=${size}`, request);
+
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const totalElements = pageData?.totalElements || 0;
-      
+
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
       console.log('[courseService.advancedSearch] Result:', { content: content.length, total: totalElements });
       return { data: { content, totalElements } };
@@ -382,7 +382,7 @@ export const courseService = {
   publishCourse: async (courseId) => {
     try {
       console.log('[courseService.publishCourse] Publishing course:', courseId);
-      const response = await api.post(`/api/v1/courses/${courseId}/publish`);
+      const response = await api.post(`/v1/courses/${courseId}/publish`);
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {
@@ -395,7 +395,7 @@ export const courseService = {
   unpublishCourse: async (courseId) => {
     try {
       console.log('[courseService.unpublishCourse] Unpublishing course:', courseId);
-      const response = await api.post(`/api/v1/courses/${courseId}/unpublish`);
+      const response = await api.post(`/v1/courses/${courseId}/unpublish`);
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {
@@ -409,11 +409,11 @@ export const courseService = {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       console.log('[courseService.uploadCourseImage] Uploading image for course:', courseId);
       // Don't set Content-Type header - let axios handle FormData automatically
-      const response = await api.post(`/api/v1/courses/${courseId}/image`, formData);
-      
+      const response = await api.post(`/v1/courses/${courseId}/image`, formData);
+
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {
@@ -427,11 +427,11 @@ export const courseService = {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       console.log('[courseService.uploadCoursePreviewVideo] Uploading preview video for course:', courseId);
       // Don't set Content-Type header - let axios handle FormData automatically
-      const response = await api.post(`/api/v1/courses/${courseId}/preview-video`, formData);
-      
+      const response = await api.post(`/v1/courses/${courseId}/preview-video`, formData);
+
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {
@@ -444,7 +444,7 @@ export const courseService = {
   approveCourse: async (courseId) => {
     try {
       console.log('[courseService.approveCourse] Approving course:', courseId);
-      const response = await api.post(`/api/v1/courses/${courseId}/approve`);
+      const response = await api.post(`/v1/courses/${courseId}/approve`);
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {
@@ -457,7 +457,7 @@ export const courseService = {
   rejectCourse: async (courseId, reason) => {
     try {
       console.log('[courseService.rejectCourse] Rejecting course:', courseId);
-      const response = await api.post(`/api/v1/courses/${courseId}/reject`, { reason });
+      const response = await api.post(`/v1/courses/${courseId}/reject`, { reason });
       const course = response.data?.data || response.data;
       return { data: formatCourseForCard(course) };
     } catch (error) {

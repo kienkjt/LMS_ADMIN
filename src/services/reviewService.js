@@ -9,7 +9,7 @@ export const reviewService = {
   create: async (data) => {
     try {
       console.log('[reviewService.create] Creating review');
-      const response = await api.post('/api/v1/reviews', {
+      const response = await api.post('/v1/reviews', {
         courseId: data.courseId,
         rating: data.rating,
         comment: data.comment || '',
@@ -32,7 +32,7 @@ export const reviewService = {
       const page = params?.page || 1;
       const size = params?.size || 10;
       console.log('[reviewService.getByCourse] Fetching reviews for course:', courseId);
-      const response = await api.get(`/api/v1/courses/${courseId}/reviews?page=${page}&size=${size}`);
+      const response = await api.get(`/v1/courses/${courseId}/reviews?page=${page}&size=${size}`);
       const data = response.data?.data || response.data;
       return { data: data };
     } catch (error) {
@@ -49,7 +49,7 @@ export const reviewService = {
   getMyReview: async (courseId) => {
     try {
       console.log('[reviewService.getMyReview] Fetching my review for course:', courseId);
-      const response = await api.get(`/api/v1/courses/${courseId}/my-review`);
+      const response = await api.get(`/v1/courses/${courseId}/my-review`);
       return { data: response.data?.data || response.data };
     } catch (error) {
       // If not found, it's not an error
@@ -65,7 +65,7 @@ export const reviewService = {
   delete: async (reviewId) => {
     try {
       console.log('[reviewService.delete] Deleting review:', reviewId);
-      const response = await api.delete(`/api/v1/reviews/${reviewId}`);
+      const response = await api.delete(`/v1/reviews/${reviewId}`);
       return { data: response.data?.data || response.data };
     } catch (error) {
       console.error('[reviewService.delete] Error:', error);
@@ -82,7 +82,7 @@ export const reviewService = {
   update: async (reviewId, data) => {
     try {
       console.log('[reviewService.update] Updating review:', reviewId);
-      const response = await api.put(`/api/v1/reviews/${reviewId}`, {
+      const response = await api.put(`/v1/reviews/${reviewId}`, {
         rating: data.rating,
         comment: data.comment || '',
       });
@@ -101,7 +101,7 @@ export const reviewService = {
   getRatingStats: async (courseId) => {
     try {
       console.log('[reviewService.getRatingStats] Fetching stats for course:', courseId);
-      const response = await api.get(`/api/v1/courses/${courseId}/rating-stats`);
+      const response = await api.get(`/v1/courses/${courseId}/rating-stats`);
       return { data: response.data?.data || response.data };
     } catch (error) {
       console.error('[reviewService.getRatingStats] Error:', error);

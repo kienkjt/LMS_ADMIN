@@ -6,7 +6,7 @@ export const userService = {
    */
   getProfile: async () => {
     try {
-      const response = await api.get('/api/v1/user/profile');
+      const response = await api.get('/v1/user/profile');
       return response;
     } catch (error) {
       throw error;
@@ -19,7 +19,7 @@ export const userService = {
    */
   updateProfile: async (data) => {
     try {
-      const response = await api.put('/api/v1/user/profile', {
+      const response = await api.put('/v1/user/profile', {
         fullName: data.fullName,
         gender: data.gender || null,
         phoneNumber: data.phoneNumber || null,
@@ -37,7 +37,7 @@ export const userService = {
    */
   changePassword: async (data) => {
     try {
-      const response = await api.post('/api/v1/user/change-password', {
+      const response = await api.post('/v1/user/change-password', {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
         confirmNewPassword: data.confirmNewPassword,
@@ -56,7 +56,7 @@ export const userService = {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const response = await api.post('/api/v1/user/avatar', formData, {
+      const response = await api.post('/v1/user/avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -72,7 +72,7 @@ export const userService = {
    */
   deleteAvatar: async () => {
     try {
-      const response = await api.delete('/api/v1/user/avatar');
+      const response = await api.delete('/v1/user/avatar');
       return response;
     } catch (error) {
       throw error;

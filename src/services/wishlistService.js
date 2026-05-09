@@ -13,7 +13,7 @@ export const wishlistService = {
       const page = params.page || 1;
       const size = params.size || 10;
       console.log('[wishlistService.getWishlist] Fetching wishlist');
-      const response = await api.get(`/api/v1/wishlist?page=${page}&size=${size}`);
+      const response = await api.get(`/v1/wishlist?page=${page}&size=${size}`);
       return { data: response.data?.data || response.data };
     } catch (error) {
       console.error('[wishlistService.getWishlist] Error:', error);
@@ -29,7 +29,7 @@ export const wishlistService = {
   add: async (courseId) => {
     try {
       console.log('[wishlistService.add] Adding to wishlist:', courseId);
-      const response = await api.post('/api/v1/wishlist/add', { courseId });
+      const response = await api.post('/v1/wishlist/add', { courseId });
       return { data: response.data?.data || response.data };
     } catch (error) {
       console.error('[wishlistService.add] Error:', error);
@@ -45,7 +45,7 @@ export const wishlistService = {
   remove: async (courseId) => {
     try {
       console.log('[wishlistService.remove] Removing from wishlist:', courseId);
-      const response = await api.delete(`/api/v1/wishlist/${courseId}`);
+      const response = await api.delete(`/v1/wishlist/${courseId}`);
       return { data: response.data?.data || response.data };
     } catch (error) {
       console.error('[wishlistService.remove] Error:', error);

@@ -38,7 +38,7 @@ const LearningPage = () => {
         setLoading(true);
 
         // Load course
-        const courseRes = await api.get(`/api/v1/courses/${courseId}`);
+        const courseRes = await api.get(`/v1/courses/${courseId}`);
         const courseData = courseRes.data?.data || courseRes.data;
         setCourse(courseData);
 

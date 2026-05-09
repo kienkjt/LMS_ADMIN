@@ -10,7 +10,7 @@ export const lessonService = {
   getLessonsByChapter: async (courseId, chapterId) => {
     try {
       console.log('[lessonService.getLessonsByChapter] Fetching lessons for chapter:', chapterId);
-      const response = await api.get(`/api/v1/courses/${courseId}/chapters/${chapterId}/lessons`);
+      const response = await api.get(`/v1/courses/${courseId}/chapters/${chapterId}/lessons`);
       const lessons = response.data?.data || response.data || [];
       console.log('[lessonService.getLessonsByChapter] Success, found:', lessons.length);
       return { data: lessons };
@@ -31,7 +31,7 @@ export const lessonService = {
     try {
       console.log('[lessonService.getLessonById] Fetching lesson:', lessonId);
       const response = await api.get(
-        `/api/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}`
+        `/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}`
       );
       const lesson = response.data?.data || response.data;
       console.log('[lessonService.getLessonById] Success');
@@ -53,7 +53,7 @@ export const lessonService = {
     try {
       console.log('[lessonService.createLesson] Creating lesson for chapter:', chapterId);
       const response = await api.post(
-        `/api/v1/courses/${courseId}/chapters/${chapterId}/lessons`,
+        `/v1/courses/${courseId}/chapters/${chapterId}/lessons`,
         {
           title: data.title,
           description: data.description || '',
@@ -87,7 +87,7 @@ export const lessonService = {
     try {
       console.log('[lessonService.updateLesson] Updating lesson:', lessonId);
       const response = await api.put(
-        `/api/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}`,
+        `/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}`,
         {
           title: data.title,
           description: data.description || '',
@@ -121,7 +121,7 @@ export const lessonService = {
       console.log('[lessonService.deleteLesson] Deleting lesson:', lessonId);
       // Backend uses POST for delete
       const response = await api.post(
-        `/api/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}`
+        `/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}`
       );
       console.log('[lessonService.deleteLesson] Success');
       return { data: response.data?.data || response.data || { message: 'Xóa bài học thành công' } };
@@ -146,7 +146,7 @@ export const lessonService = {
 
       console.log('[lessonService.uploadLessonVideo] Uploading video for lesson:', lessonId);
       const response = await api.post(
-        `/api/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}/video`,
+        `/v1/courses/${courseId}/chapters/${chapterId}/lessons/${lessonId}/video`,
         formData
       );
 

@@ -43,7 +43,7 @@
  * 
  * const handleFormSubmit = async (formData) => {
  *   try {
- *     const response = await api.post('/api/v1/courses', formData);
+ *     const response = await api.post('/v1/courses', formData);
  *     toast.success('Khóa học đã được tạo!');
  *   } catch (error) {
  *     const errorMsg = handleApiError(error);

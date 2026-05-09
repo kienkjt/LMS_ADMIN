@@ -13,7 +13,7 @@
 ## Authentication
 
 ### 1. Register (Đăng ký)
-**Endpoint:** `POST /api/v1/auth/register`
+**Endpoint:** `POST /v1/auth/register`
 
 **Input:**
 ```json
@@ -52,7 +52,7 @@
 ---
 
 ### 2. Login (Đăng nhập)
-**Endpoint:** `POST /api/v1/auth/login`
+**Endpoint:** `POST /v1/auth/login`
 
 **Input:**
 ```json
@@ -91,7 +91,7 @@
 ---
 
 ### 3. Verify OTP (Xác nhận OTP)
-**Endpoint:** `POST /api/v1/auth/verify-otp`
+**Endpoint:** `POST /v1/auth/verify-otp`
 
 **Input:**
 ```json
@@ -121,7 +121,7 @@
 ---
 
 ### 4. Logout (Đăng xuất)
-**Endpoint:** `POST /api/v1/auth/logout`
+**Endpoint:** `POST /v1/auth/logout`
 
 **Required Header:**
 ```
@@ -140,7 +140,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 5. Refresh Token
-**Endpoint:** `POST /api/v1/auth/refresh-token`
+**Endpoint:** `POST /v1/auth/refresh-token`
 
 **Input:**
 ```json
@@ -166,7 +166,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 6. Forgot Password (Quên mật khẩu)
-**Endpoint:** `POST /api/v1/auth/forgot-password`
+**Endpoint:** `POST /v1/auth/forgot-password`
 
 **Input:**
 ```json
@@ -191,7 +191,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 7. Verify Reset OTP
-**Endpoint:** `POST /api/v1/auth/verify-reset-otp`
+**Endpoint:** `POST /v1/auth/verify-reset-otp`
 
 **Input:**
 ```json
@@ -213,7 +213,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 8. Reset Password (Đặt lại mật khẩu)
-**Endpoint:** `POST /api/v1/auth/reset-password`
+**Endpoint:** `POST /v1/auth/reset-password`
 
 **Input:**
 ```json
@@ -241,7 +241,7 @@ Authorization: Bearer <accessToken>
 ## User Management
 
 ### 1. Get Profile (Lấy thông tin cá nhân)
-**Endpoint:** `GET /api/v1/user/profile`
+**Endpoint:** `GET /v1/user/profile`
 
 **Required Header:**
 ```
@@ -270,7 +270,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 2. Update Profile (Cập nhật thông tin cá nhân)
-**Endpoint:** `PUT /api/v1/user/profile`
+**Endpoint:** `PUT /v1/user/profile`
 
 **Required Header:**
 ```
@@ -308,7 +308,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 3. Upload Avatar (Tải lên ảnh đại diện)
-**Endpoint:** `POST /api/v1/user/avatar`
+**Endpoint:** `POST /v1/user/avatar`
 
 **Required Header:**
 ```
@@ -341,7 +341,7 @@ Content-Type: multipart/form-data
 ---
 
 ### 4. Delete Avatar (Xóa ảnh đại diện)
-**Endpoint:** `DELETE /api/v1/user/avatar`
+**Endpoint:** `DELETE /v1/user/avatar`
 
 **Required Header:**
 ```
@@ -370,7 +370,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 5. Change Password (Đổi mật khẩu)
-**Endpoint:** `POST /api/v1/user/change-password`
+**Endpoint:** `POST /v1/user/change-password`
 
 **Required Header:**
 ```
@@ -404,7 +404,7 @@ Authorization: Bearer <accessToken>
 ## Category Management
 
 ### 1. Create Category (Tạo danh mục)
-**Endpoint:** `POST /api/v1/categories`
+**Endpoint:** `POST /v1/categories`
 
 **Required Header:**
 ```
@@ -445,7 +445,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 2. Get Category by ID (Lấy danh mục theo ID)
-**Endpoint:** `GET /api/v1/categories/{categoryId}`
+**Endpoint:** `GET /v1/categories/{categoryId}`
 
 **Output:**
 ```json
@@ -467,14 +467,14 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 3. Get Categories (Lấy danh sách danh mục)
-**Endpoint:** `GET /api/v1/categories`
+**Endpoint:** `GET /v1/categories`
 
 **Query Parameters:**
 - `keyword` (optional): Tìm kiếm theo tên
 - `page` (default: 1): Trang (bắt đầu từ 1)
 - `pageSize` (default: 10): Số lượng items trên mỗi trang
 
-**Example URL:** `GET /api/v1/categories?keyword=Web&page=1&pageSize=10`
+**Example URL:** `GET /v1/categories?keyword=Web&page=1&pageSize=10`
 
 **Output:**
 ```json
@@ -506,7 +506,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 4. Update Category (Cập nhật danh mục)
-**Endpoint:** `PUT /api/v1/categories/{categoryId}`
+**Endpoint:** `PUT /v1/categories/{categoryId}`
 
 **Required Header:**
 ```
@@ -543,7 +543,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 5. Delete Category (Xóa danh mục)
-**Endpoint:** `DELETE /api/v1/categories/{categoryId}`
+**Endpoint:** `DELETE /v1/categories/{categoryId}`
 
 **Required Header:**
 ```
@@ -570,7 +570,7 @@ Authorization: Bearer <accessToken>
 ## Course Management
 
 ### 1. Approve Course (Phê duyệt khóa học)
-**Endpoint:** `POST /api/v1/courses/{courseId}/approve`
+**Endpoint:** `POST /v1/courses/{courseId}/approve`
 
 **Required Header:**
 ```
@@ -609,7 +609,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 2. Reject Course (Từ chối khóa học)
-**Endpoint:** `POST /api/v1/courses/{courseId}/reject`
+**Endpoint:** `POST /v1/courses/{courseId}/reject`
 
 **Required Header:**
 ```
@@ -656,7 +656,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 3. Search Managed Courses (Tìm kiếm khóa học để quản lý)
-**Endpoint:** `POST /api/v1/courses/management/search`
+**Endpoint:** `POST /v1/courses/management/search`
 
 **Required Header:**
 ```
@@ -721,7 +721,7 @@ Authorization: Bearer <accessToken>
 ## Withdrawal Management
 
 ### 1. Get Withdrawal Request (Lấy yêu cầu rút tiền)
-**Endpoint:** `GET /api/v1/withdrawal/request/{requestId}`
+**Endpoint:** `GET /v1/withdrawal/request/{requestId}`
 
 **Required Header:**
 ```
@@ -752,7 +752,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 2. Get All Withdrawal Requests (Lấy tất cả yêu cầu rút tiền)
-**Endpoint:** `GET /api/v1/withdrawal/requests`
+**Endpoint:** `GET /v1/withdrawal/requests`
 
 **Required Header:**
 ```
@@ -766,7 +766,7 @@ Authorization: Bearer <accessToken>
 - `page` (default: 1): Trang (bắt đầu từ 1)
 - `pageSize` (default: 10): Số lượng items trên mỗi trang
 
-**Example URL:** `GET /api/v1/withdrawal/requests?status=PENDING&page=1&pageSize=10`
+**Example URL:** `GET /v1/withdrawal/requests?status=PENDING&page=1&pageSize=10`
 
 **Output:**
 ```json
@@ -801,7 +801,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 3. Approve Withdrawal Request (Phê duyệt yêu cầu rút tiền)
-**Endpoint:** `POST /api/v1/withdrawal/request/{requestId}/approve`
+**Endpoint:** `POST /v1/withdrawal/request/{requestId}/approve`
 
 **Required Header:**
 ```
@@ -832,7 +832,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 4. Reject Withdrawal Request (Từ chối yêu cầu rút tiền)
-**Endpoint:** `POST /api/v1/withdrawal/request/{requestId}/reject`
+**Endpoint:** `POST /v1/withdrawal/request/{requestId}/reject`
 
 **Required Header:**
 ```

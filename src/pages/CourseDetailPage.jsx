@@ -131,12 +131,12 @@ const CourseDetailPage = () => {
         let courseResponse;
 
         if (isUUID || isNumericId) {
-          courseResponse = await api.get(`/api/v1/courses/${slug}`);
+          courseResponse = await api.get(`/v1/courses/${slug}`);
         } else {
           try {
-            courseResponse = await api.get(`/api/v1/courses/slug/${slug}`);
+            courseResponse = await api.get(`/v1/courses/slug/${slug}`);
           } catch {
-            courseResponse = await api.get(`/api/v1/courses/${slug}`);
+            courseResponse = await api.get(`/v1/courses/${slug}`);
           }
         }
 

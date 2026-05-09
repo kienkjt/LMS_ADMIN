@@ -13,14 +13,14 @@ const formatError = (error) => {
   // Try to extract message from various possible error structures
   if (error?.response) {
     const { data, status, statusText } = error.response;
-    
+
     // Log actual response for debugging
     console.debug('API Error Response:', { data, status, statusText });
-    
+
     // Structure 1: error.response.data.message (APIResponse format)
     if (typeof data === 'string') {
       message = data;
-    } 
+    }
     // Structure 2: error.response.data.message (direct message)
     else if (data?.message) {
       message = data.message;
@@ -67,7 +67,7 @@ export const authService = {
    */
   register: async (data) => {
     try {
-      const response = await api.post('/api/v1/auth/register', {
+      const response = await api.post('/v1/auth/register', {
         email: data.email,
         password: data.password,
         fullName: data.fullName || data.name,
@@ -85,7 +85,7 @@ export const authService = {
    */
   login: async (data) => {
     try {
-      const response = await api.post('/api/v1/auth/login', {
+      const response = await api.post('/v1/auth/login', {
         email: data.email,
         password: data.password,
       });
@@ -95,16 +95,16 @@ export const authService = {
         const loginData = response.data.data;
         localStorage.setItem(TOKEN_KEY, loginData.accessToken);
         localStorage.setItem(REFRESH_TOKEN_KEY, loginData.refreshToken);
-        
+
         console.debug('[Auth] Tokens stored:', {
           accessToken: loginData.accessToken ? `${loginData.accessToken.substring(0, 20)}...` : 'EMPTY',
           refreshToken: loginData.refreshToken ? `${loginData.refreshToken.substring(0, 20)}...` : 'EMPTY',
         });
-        
+
         // Verify tokens are in localStorage
         const storedToken = localStorage.getItem(TOKEN_KEY);
         console.debug('[Auth] Token verification - stored in localStorage:', storedToken ? `${storedToken.substring(0, 20)}...` : 'FAILED');
-        
+
         // Store user info (role)
         const userInfo = {
           role: loginData.role,
@@ -123,7 +123,7 @@ export const authService = {
    */
   logout: async () => {
     try {
-      await api.post('/api/v1/auth/logout');
+      await api.post('/v1/auth/logout');
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
@@ -143,7 +143,7 @@ export const authService = {
    */
   verifyOtp: async (data) => {
     try {
-      const response = await api.post('/api/v1/auth/verify-otp', {
+      const response = await api.post('/v1/auth/verify-otp', {
         email: data.email,
         otp: data.otp,
       });
@@ -159,7 +159,7 @@ export const authService = {
    */
   forgotPassword: async (data) => {
     try {
-      const response = await api.post('/api/v1/auth/forgot-password', {
+      const response = await api.post('/v1/auth/forgot-password', {
         email: data.email,
       });
       return response;
@@ -174,7 +174,7 @@ export const authService = {
    */
   verifyResetOtp: async (data) => {
     try {
-      const response = await api.post('/api/v1/auth/verify-reset-otp', {
+      const response = await api.post('/v1/auth/verify-reset-otp', {
         email: data.email,
         otp: data.otp,
       });
@@ -190,7 +190,7 @@ export const authService = {
    */
   resetPassword: async (data) => {
     try {
-      const response = await api.post('/api/v1/auth/reset-password', {
+      const response = await api.post('/v1/auth/reset-password', {
         email: data.email,
         newPassword: data.newPassword,
       });
@@ -206,7 +206,7 @@ export const authService = {
    */
   refreshToken: async (data) => {
     try {
-      const response = await api.post('/api/v1/auth/refresh-token', {
+      const response = await api.post('/v1/auth/refresh-token', {
         refreshToken: data.refreshToken,
       });
 

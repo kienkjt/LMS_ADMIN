@@ -16,10 +16,10 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(TOKEN_KEY);
     const language = i18n.language || 'vi';
-    
+
     // Set Accept-Language header cho backend tra cứu locale
     config.headers['Accept-Language'] = language;
-    
+
     console.debug('[API] Token from localStorage:', token ? `${token.substring(0, 20)}...` : 'NOT FOUND');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -42,7 +42,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const errorMessage = handleApiError(error);
-    
+
     console.error('[API] Error response:', {
       url: originalRequest?.url,
       status: error.response?.status,
@@ -59,10 +59,10 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
         console.debug('[API] Refresh token:', refreshToken ? `${refreshToken.substring(0, 20)}...` : 'NOT FOUND');
-        
+
         if (refreshToken) {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api/v1/auth/refresh-token`,
+            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/v1/auth/refresh-token`,
             { refreshToken }
           );
           // Backend returns data in response.data.data structure

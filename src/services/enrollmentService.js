@@ -12,7 +12,7 @@ export const enrollmentService = {
   enroll: async (courseId) => {
     try {
       console.log('[enrollmentService.enroll] Enrolling in course:', courseId);
-      const response = await api.post(`/api/v1/learning/courses/${courseId}/enroll`);
+      const response = await api.post(`/v1/learning/courses/${courseId}/enroll`);
       const enrollment = response.data?.data || response.data;
       console.log('[enrollmentService.enroll] Success');
       return { data: enrollment };
@@ -46,7 +46,7 @@ export const enrollmentService = {
   unenroll: async (courseId) => {
     try {
       console.log('[enrollmentService.unenroll] Unenrolling from course:', courseId);
-      const response = await api.post(`/api/v1/learning/courses/${courseId}/unenroll`);
+      const response = await api.post(`/v1/learning/courses/${courseId}/unenroll`);
       console.log('[enrollmentService.unenroll] Success');
       return { data: response.data?.data || response.data || { message: 'Hủy đăng ký thành công' } };
     } catch (error) {
@@ -70,7 +70,7 @@ export const enrollmentService = {
     try {
       console.log('[enrollmentService.completeLesson] Marking lesson complete:', lessonId);
       const response = await api.post(
-        `/api/v1/learning/courses/${courseId}/lessons/${lessonId}/complete`
+        `/v1/learning/courses/${courseId}/lessons/${lessonId}/complete`
       );
       const progress = response.data?.data || response.data;
       console.log('[enrollmentService.completeLesson] Success, progress updated');
@@ -89,7 +89,7 @@ export const enrollmentService = {
   getProgress: async (courseId) => {
     try {
       console.log('[enrollmentService.getProgress] Fetching progress for course:', courseId);
-      const response = await api.get(`/api/v1/learning/courses/${courseId}/progress`);
+      const response = await api.get(`/v1/learning/courses/${courseId}/progress`);
       const progress = response.data?.data || response.data;
       console.log('[enrollmentService.getProgress] Success');
       return { data: progress };
@@ -107,7 +107,7 @@ export const enrollmentService = {
   getEnrollment: async (courseId) => {
     try {
       console.log('[enrollmentService.getEnrollment] Fetching enrollment for course:', courseId);
-      const response = await api.get(`/api/v1/learning/my-courses`);
+      const response = await api.get(`/v1/learning/my-courses`);
       const courses = response.data?.data || response.data || [];
       const enrollment = courses.find(c => c.courseId === courseId);
       if (!enrollment) throw { response: { status: 404, data: { message: 'Đăng ký không tìm thấy' } } };
@@ -125,7 +125,7 @@ export const enrollmentService = {
   getStudentCourses: async () => {
     try {
       console.log('[enrollmentService.getStudentCourses] Fetching student courses');
-      const response = await api.get('/api/v1/learning/my-courses');
+      const response = await api.get('/v1/learning/my-courses');
       const courses = response.data?.data || response.data || [];
       console.log('[enrollmentService.getStudentCourses] Success, found:', courses.length);
       return { data: courses };
@@ -148,7 +148,7 @@ export const enrollmentService = {
       const page = params?.page || 1;
       const size = params?.size || 10;
       console.log('[enrollmentService.getStudentCoursesPaginated] Fetching with pagination');
-      const response = await api.get(`/api/v1/learning/my-courses?page=${page}&size=${size}`);
+      const response = await api.get(`/v1/learning/my-courses?page=${page}&size=${size}`);
       const pageData = response.data?.data || response.data;
       console.log('[enrollmentService.getStudentCoursesPaginated] Success');
       return { data: pageData };
@@ -172,7 +172,7 @@ export const enrollmentService = {
   getCourseStudents: async (courseId) => {
     try {
       console.log('[enrollmentService.getCourseStudents] Fetching students for course:', courseId);
-      const response = await api.get(`/api/v1/learning/courses/${courseId}/students`);
+      const response = await api.get(`/v1/learning/courses/${courseId}/students`);
       const students = response.data?.data || response.data || [];
       console.log('[enrollmentService.getCourseStudents] Success, found:', students.length);
       return { data: students };
@@ -197,7 +197,7 @@ export const enrollmentService = {
       const size = params?.size || 10;
       console.log('[enrollmentService.getCourseStudentsPaginated] Fetching for course:', courseId);
       const response = await api.get(
-        `/api/v1/learning/courses/${courseId}/students?page=${page}&size=${size}`
+        `/v1/learning/courses/${courseId}/students?page=${page}&size=${size}`
       );
       const pageData = response.data?.data || response.data;
       console.log('[enrollmentService.getCourseStudentsPaginated] Success');
