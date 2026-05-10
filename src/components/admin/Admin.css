@@ -1059,6 +1059,96 @@
   color: var(--text-primary);
 }
 
+.timeseries-chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeseries-chart-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.timeseries-chart-kpis div {
+  background: linear-gradient(145deg, #f8fafc, #eef2ff);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeseries-chart-kpis span {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.timeseries-chart-kpis strong {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.timeseries-chart-body {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 10px;
+}
+
+.timeseries-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  padding: 6px 0;
+}
+
+.timeseries-canvas-wrap {
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 8px 10px 10px;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+
+.timeseries-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.timeseries-grid-line {
+  stroke: #e5e7eb;
+  stroke-width: 0.5;
+}
+
+.timeseries-area {
+  fill: url(#revenueAreaGradient);
+}
+
+.timeseries-line {
+  fill: none;
+  stroke: #0ea5e9;
+  stroke-width: 0.9;
+}
+
+.timeseries-dot {
+  fill: #0284c7;
+  stroke: #ffffff;
+  stroke-width: 0.4;
+}
+
+.timeseries-x-axis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+  gap: 6px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  text-align: center;
+}
+
 /* ─── Notification List ─── */
 .notification-list {
   padding: 0;

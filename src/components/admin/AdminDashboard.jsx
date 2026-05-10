@@ -86,6 +86,65 @@ const MiniChart = ({ data = [], type = 'bar', color = '#7c3aed', height = 120 })
 };
 
 // ─── Donut Chart Component ───
+const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
+  if (!Array.isArray(data) || data.length === 0) return null;
+
+  const values = data.map((item) => Number(item.amount || 0));
+  const maxVal = Math.max(...values, 1);
+  const minVal = Math.min(...values, 0);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const pointStep = 100 / Math.max(values.length - 1, 1);
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((rate) => Math.round(maxVal * rate));
+  const linePoints = values.map((value, index) => {
+    const x = index * pointStep;
+    const y = 100 - (value / maxVal) * 100;
+    return `${x},${y}`;
+  }).join(' ');
+  const areaPoints = `0,100 ${linePoints} 100,100`;
+
+  return (
+    <div className="timeseries-chart-card">
+      <div className="timeseries-chart-kpis">
+        <div><span>Tổng</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</strong></div>
+        <div><span>Cao nhất</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(maxVal)}</strong></div>
+        <div><span>Thấp nhất</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(minVal)}</strong></div>
+      </div>
+      <div className="timeseries-chart-body" style={{ height }}>
+        <div className="timeseries-y-axis">
+          {yTicks.slice().reverse().map((tick) => (
+            <span key={tick}>{(tick / 1000000).toFixed(0)}M</span>
+          ))}
+        </div>
+        <div className="timeseries-canvas-wrap">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="timeseries-svg">
+            <defs>
+              <linearGradient id="revenueAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.04" />
+              </linearGradient>
+            </defs>
+            {[20, 40, 60, 80].map((line) => (
+              <line key={line} x1="0" y1={line} x2="100" y2={line} className="timeseries-grid-line" />
+            ))}
+            <polygon points={areaPoints} className="timeseries-area" />
+            <polyline points={linePoints} className="timeseries-line" />
+            {values.map((value, index) => {
+              const x = index * pointStep;
+              const y = 100 - (value / maxVal) * 100;
+              return <circle key={index} cx={x} cy={y} r="1.2" className="timeseries-dot" />;
+            })}
+          </svg>
+        </div>
+      </div>
+      <div className="timeseries-x-axis">
+        {data.map((item, index) => (
+          <span key={`${item.label}-${index}`}>{(item.label || '').slice(5)}</span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const DonutChart = ({ data = [], size = 140 }) => {
   const canvasRef = useRef(null);
   const colors = ['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#8b5cf6'];
@@ -392,7 +451,7 @@ const AdminDashboard = () => {
                 <h3>Doanh thu hàng ngày</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
-                <MiniChart data={dashData.dailyRevenue} type="bar" color="#10b981" height={160} />
+                <TimeSeriesRevenueChart data={dashData.dailyRevenue} height={220} />
               </div>
             </div>
           )}
