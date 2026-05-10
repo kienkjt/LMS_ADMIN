@@ -278,7 +278,7 @@ const DashboardLayout = ({ children }) => {
               >
                 <path d="M12 2L2 7V12C2 18.6 7.1 24 12 24C16.9 24 22 18.6 22 12V7L12 2Z" />
               </svg>
-              <span className="logo-text">EduLearn</span>
+              <span className="logo-text">LMS</span>
             </Link>
 
             {/* Nav */}
@@ -433,7 +433,7 @@ const DashboardLayout = ({ children }) => {
         <div className="sidebar-header">
           <Link to={homePath} className="sidebar-logo">
             <div className="logo-icon">E</div>
-            {!sidebarCollapsed && <span className="logo-text">EduLearn</span>}
+            {!sidebarCollapsed && <span className="logo-text">LMS</span>}
           </Link>
           <button
             className="sidebar-toggle"

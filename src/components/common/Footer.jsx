@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="footer-brand">
             <div className="footer-logo">
               <div className="logo-icon">E</div>
-              <span className="logo-text">EduLearn</span>
+              <span className="logo-text">LMS</span>
             </div>
             <p className="footer-desc">
               Nền tảng học tập trực tuyến hàng đầu Việt Nam. Khám phá hàng nghìn
@@ -105,7 +105,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} EduLearn. Bảo lưu mọi quyền.</p>
+          <p>&copy; {new Date().getFullYear()} LMS. Bảo lưu mọi quyền.</p>
           <div className="footer-bottom-links">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>

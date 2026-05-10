@@ -84,7 +84,7 @@ const Register = () => {
         <div className="auth-hero-content">
           <Link to={ROUTES.HOME} className="auth-logo">
             <div className="logo-icon-lg">E</div>
-            <span className="logo-text-lg">EduLearn</span>
+            <span className="logo-text-lg">LMS</span>
           </Link>
           <h1>Bắt đầu hành trình học tập</h1>
           <p>

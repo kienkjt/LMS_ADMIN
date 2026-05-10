@@ -92,7 +92,7 @@ const HomePage = () => {
               </h1>
               <p className="hero-subtitle">
                 Khám phá hàng ngàn khóa học chất lượng từ các giảng viên hàng
-                đầu. Học mọi lúc, mọi nơi với EduLearn.
+                đầu. Học mọi lúc, mọi nơi với LMS.
               </p>
 
               <form className="hero-search-form" onSubmit={handleSearch}>
@@ -285,7 +285,7 @@ const HomePage = () => {
             }}
           >
             <div>
-              <h2 className="section-title">Tại sao chọn EduLearn?</h2>
+              <h2 className="section-title">Tại sao chọn LMS?</h2>
               <p className="section-subtitle">
                 Chúng tôi cam kết mang đến trải nghiệm học tập tốt nhất
               </p>

@@ -105,7 +105,7 @@ const Login = () => {
         <div className="auth-hero-content">
           <Link to={ROUTES.HOME} className="auth-logo">
             <div className="logo-icon-lg">E</div>
-            <span className="logo-text-lg">EduLearn</span>
+            <span className="logo-text-lg">LMS</span>
           </Link>
           <h1>Học tập không giới hạn</h1>
           <p>
@@ -129,7 +129,7 @@ const Login = () => {
           <div className="auth-testimonials">
             <div className="testimonial">
               <p>
-                "EduLearn đã giúp tôi chuyển đổi sự nghiệp. Các khóa học chất lượng và giảng viên tận tâm đã giúp tôi học được những kỹ năng mới và tìm được công việc mơ ước.  "
+                "LMS đã giúp tôi chuyển đổi sự nghiệp. Các khóa học chất lượng và giảng viên tận tâm đã giúp tôi học được những kỹ năng mới và tìm được công việc mơ ước.  "
               </p>
               <div className="testimonial-author">
                 <div className="avatar avatar-sm">TK</div>

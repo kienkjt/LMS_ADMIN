@@ -107,7 +107,7 @@ const Navbar = () => {
               E
             </text>
           </svg>
-          <span className="logo-text">EduLearn</span>
+          <span className="logo-text">LMS</span>
         </Link>
 
         {/* Search Bar - Hidden on mobile, shown on desktop */}

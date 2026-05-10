@@ -37,7 +37,7 @@ const ForgotPassword = () => {
         <div className="auth-hero-content">
           <div className="auth-logo">
             <div className="logo-icon-lg">E</div>
-            <span className="logo-text-lg">EduLearn</span>
+            <span className="logo-text-lg">LMS</span>
           </div>
           <div
             style={{ fontSize: "80px", textAlign: "center", margin: "32px 0" }}
