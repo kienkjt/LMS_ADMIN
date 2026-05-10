@@ -183,6 +183,13 @@ export const courseService = {
       // Fallback to mock data
       let results = [...mockCourses];
 
+      if (data.keyword) {
+        const keyword = String(data.keyword).toLowerCase();
+        results = results.filter((course) =>
+          `${course.title || ''} ${course.description || ''}`.toLowerCase().includes(keyword),
+        );
+      }
+
       if (data.categoryId) {
         results = results.filter(c => c.categoryId === parseInt(data.categoryId));
       }

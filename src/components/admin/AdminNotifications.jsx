@@ -59,6 +59,8 @@ const AdminNotifications = () => {
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [userSearchResults, setUserSearchResults] = useState([]);
   const [isSearchingUser, setIsSearchingUser] = useState(false);
+  const [sendMode, setSendMode] = useState('SPECIFIC'); // 'SPECIFIC' or 'GROUP'
+  const [targetGroup, setTargetGroup] = useState('ALL'); // 'ALL', 'STUDENT', 'INSTRUCTOR'
   const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -144,15 +146,34 @@ const AdminNotifications = () => {
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
-    if (selectedUsers.length === 0 || !createForm.title || !createForm.message) {
-      toast.error('Vui lòng chọn người nhận, tiêu đề và nội dung');
+
+    let ids = [];
+
+    if (sendMode === 'SPECIFIC') {
+      if (selectedUsers.length === 0) {
+        toast.error('Vui lòng chọn ít nhất 1 người nhận');
+        return;
+      }
+      ids = selectedUsers.map(u => u.id);
+    }
+
+    if (!createForm.title || !createForm.message) {
+      toast.error('Vui lòng điền tiêu đề và nội dung');
       return;
     }
-    
-    const ids = selectedUsers.map(u => u.id);
 
     setCreating(true);
     try {
+      if (sendMode === 'GROUP') {
+        const res = await adminUserService.getAll({ roleCode: targetGroup === 'ALL' ? undefined : targetGroup, size: 10000 });
+        ids = (res.data?.content || []).map(u => u.id);
+        
+        if (ids.length === 0) {
+          toast.error('Không tìm thấy người dùng nào trong nhóm này');
+          setCreating(false);
+          return;
+        }
+      }
       const payload = {
         type: createForm.type,
         title: createForm.title,
@@ -166,10 +187,12 @@ const AdminNotifications = () => {
       }
 
       await adminNotificationService.create(payload);
-      toast.success('Tạo thông báo thành công');
+      toast.success(`Tạo thông báo thành công cho ${ids.length} người dùng`);
       setShowCreateModal(false);
       setCreateForm({ type: 'SYSTEM', title: '', message: '' });
       setSelectedUsers([]);
+      setSendMode('SPECIFIC');
+      setTargetGroup('ALL');
       fetchNotifications();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Không thể tạo thông báo');
@@ -328,64 +351,103 @@ const AdminNotifications = () => {
             </div>
             <form onSubmit={handleCreateSubmit}>
               <div className="admin-modal-body">
-                <div className="form-group" style={{ marginBottom: 16, position: 'relative' }}>
-                  <label className="form-label">Người nhận <span style={{ color: 'var(--error)' }}>*</span></label>
-                  
-                  {/* Selected Users Chips */}
-                  {selectedUsers.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
-                      {selectedUsers.map(user => (
-                        <div key={user.id} style={{
-                          display: 'flex', alignItems: 'center', gap: 6,
-                          padding: '4px 10px', background: 'var(--primary-light)',
-                          color: 'var(--primary)', borderRadius: 16, fontSize: '0.85rem'
-                        }}>
-                          <span>{user.email || user.fullName || user.id.substring(0,8)}</span>
-                          <button type="button" onClick={() => handleRemoveUser(user.id)} style={{
-                            background: 'transparent', border: 'none', color: 'currentColor', cursor: 'pointer', padding: 0, display: 'flex'
-                          }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                <div className="form-group" style={{ marginBottom: 16 }}>
+                  <label className="form-label" style={{ marginBottom: 12 }}>Phương thức gửi <span style={{ color: 'var(--error)' }}>*</span></label>
+                  <div style={{ display: 'flex', gap: 20, marginBottom: 16 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input 
+                        type="radio" 
+                        name="sendMode" 
+                        value="SPECIFIC" 
+                        checked={sendMode === 'SPECIFIC'} 
+                        onChange={(e) => setSendMode(e.target.value)} 
+                      />
+                      <span>Người dùng cụ thể</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input 
+                        type="radio" 
+                        name="sendMode" 
+                        value="GROUP" 
+                        checked={sendMode === 'GROUP'} 
+                        onChange={(e) => setSendMode(e.target.value)} 
+                      />
+                      <span>Theo nhóm người dùng</span>
+                    </label>
+                  </div>
 
-                  {/* Search Input */}
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Tìm kiếm người dùng theo tên, email..."
-                    value={userSearchTerm}
-                    onChange={(e) => setUserSearchTerm(e.target.value)}
-                  />
-                  
-                  {/* Dropdown Results */}
-                  {userSearchTerm.trim() && (
-                    <div style={{
-                      position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10,
-                      background: 'var(--bg-card)', border: '1px solid var(--border)',
-                      borderRadius: 6, marginTop: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                      maxHeight: 200, overflowY: 'auto'
-                    }}>
-                      {isSearchingUser ? (
-                        <div style={{ padding: 12, textAlign: 'center', color: 'var(--text-secondary)' }}>Đang tìm kiếm...</div>
-                      ) : userSearchResults.length > 0 ? (
-                        userSearchResults.map(user => (
-                          <div 
-                            key={user.id} 
-                            style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-light)' }}
-                            onClick={() => handleSelectUser(user)}
-                            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-secondary)'}
-                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                          >
-                            <div style={{ fontWeight: 500 }}>{user.fullName || user.firstName + ' ' + user.lastName}</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{user.email}</div>
-                          </div>
-                        ))
-                      ) : (
-                        <div style={{ padding: 12, textAlign: 'center', color: 'var(--text-secondary)' }}>Không tìm thấy kết quả</div>
+                  {sendMode === 'SPECIFIC' ? (
+                    <div style={{ position: 'relative' }}>
+                      {/* Selected Users Chips */}
+                      {selectedUsers.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+                          {selectedUsers.map(user => (
+                            <div key={user.id} style={{
+                              display: 'flex', alignItems: 'center', gap: 6,
+                              padding: '4px 10px', background: 'var(--primary-light)',
+                              color: 'var(--primary)', borderRadius: 16, fontSize: '0.85rem'
+                            }}>
+                              <span>{user.email || user.fullName || user.id.substring(0,8)}</span>
+                              <button type="button" onClick={() => handleRemoveUser(user.id)} style={{
+                                background: 'transparent', border: 'none', color: 'currentColor', cursor: 'pointer', padding: 0, display: 'flex'
+                              }}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       )}
+
+                      {/* Search Input */}
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Tìm kiếm người dùng theo tên, email..."
+                        value={userSearchTerm}
+                        onChange={(e) => setUserSearchTerm(e.target.value)}
+                      />
+                      
+                      {/* Dropdown Results */}
+                      {userSearchTerm.trim() && (
+                        <div style={{
+                          position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 9999,
+                          background: '#ffffff', border: '1px solid #e5e7eb',
+                          borderRadius: 6, marginTop: 4, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                          maxHeight: 250, overflowY: 'auto'
+                        }}>
+                          {isSearchingUser ? (
+                            <div style={{ padding: 12, textAlign: 'center', color: '#6b7280' }}>Đang tìm kiếm...</div>
+                          ) : userSearchResults.length > 0 ? (
+                            userSearchResults.map(user => (
+                              <div 
+                                key={user.id} 
+                                style={{ padding: '10px 16px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6', background: '#fff', color: '#111827' }}
+                                onClick={() => handleSelectUser(user)}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = '#fff'}
+                              >
+                                <div style={{ fontWeight: 500 }}>{user.fullName || user.firstName + ' ' + user.lastName}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>{user.email} - {user.roleCode === 'STUDENT' ? 'Học viên' : user.roleCode === 'INSTRUCTOR' ? 'Giảng viên' : user.roleCode}</div>
+                              </div>
+                            ))
+                          ) : (
+                            <div style={{ padding: 12, textAlign: 'center', color: '#6b7280' }}>Không tìm thấy kết quả</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <select
+                        className="admin-filter-select"
+                        style={{ width: '100%' }}
+                        value={targetGroup}
+                        onChange={(e) => setTargetGroup(e.target.value)}
+                      >
+                        <option value="ALL">Tất cả người dùng</option>
+                        <option value="STUDENT">Tất cả học viên (Học sinh)</option>
+                        <option value="INSTRUCTOR">Tất cả giảng viên</option>
+                      </select>
                     </div>
                   )}
                 </div>
