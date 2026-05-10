@@ -506,14 +506,7 @@ export const adminNotificationService = {
    */
   create: async (data) => {
     try {
-      const response = await api.post('/v1/notifications', {
-        userId: data.userId,
-        type: data.type,
-        title: data.title,
-        message: data.message,
-        referenceId: data.referenceId || null,
-        referenceType: data.referenceType || null,
-      });
+      const response = await api.post('/v1/notifications', data);
       return { data: response.data?.data || response.data };
     } catch (error) {
       console.error('[adminNotificationService.create] Error:', error);

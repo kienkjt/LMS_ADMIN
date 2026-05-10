@@ -53,10 +53,19 @@ const NotificationCenter = () => {
 
   const containerRef = useRef(null);
 
-  const unreadCount = useMemo(
-    () => notifications.filter((notification) => !notification.isRead).length,
-    [notifications],
-  );
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await notificationService.getUnreadCount();
+        setUnreadCount(response.data?.data?.count || 0);
+      } catch (err) {
+        console.error("Failed to fetch unread count:", err);
+      }
+    };
+    fetchUnreadCount();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -77,9 +86,11 @@ const NotificationCenter = () => {
       setLoading(true);
       setError("");
 
-      const response = await notificationService.getAll();
-      const payload = response.data?.data || response.data;
-      setNotifications(normalizeNotifications(payload));
+      const response = await notificationService.getMyNotifications(0, 50);
+      const payload = response.data?.data?.content || response.data?.data || response.data;
+      const normalized = normalizeNotifications(payload);
+      setNotifications(normalized);
+      setUnreadCount(normalized.filter(n => !n.isRead).length);
       setHasLoaded(true);
     } catch (fetchError) {
       console.error("Failed to fetch notifications:", fetchError);
@@ -108,11 +119,12 @@ const NotificationCenter = () => {
             : notification,
         ),
       );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
       return;
     }
 
     try {
-      await notificationService.markRead(notificationId);
+      await notificationService.markAsRead(notificationId);
       setNotifications((prev) =>
         prev.map((notification) =>
           notification.id === notificationId
@@ -120,6 +132,7 @@ const NotificationCenter = () => {
             : notification,
         ),
       );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (markError) {
       console.error("Failed to mark notification as read:", markError);
     }
@@ -132,17 +145,18 @@ const NotificationCenter = () => {
     setNotifications((prev) =>
       prev.map((notification) => ({ ...notification, isRead: true })),
     );
+    setUnreadCount(0);
 
     const validUnreadIds = unread
       .filter((notification) => !String(notification.id).startsWith("temp-"))
       .map((notification) => notification.id);
 
     if (validUnreadIds.length > 0) {
-      await Promise.allSettled(
-        validUnreadIds.map((notificationId) =>
-          notificationService.markRead(notificationId),
-        ),
-      );
+      try {
+        await notificationService.markAllAsRead();
+      } catch (err) {
+        console.error("Failed to mark all as read:", err);
+      }
     }
   };
 
