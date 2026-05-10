@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -98,13 +98,10 @@ function App() {
               <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
 
               {/* ── Public ── */}
+              {/* ── Public ── */}
               <Route
                 path={ROUTES.HOME}
-                element={
-                  <WithMainLayout>
-                    <HomePage />
-                  </WithMainLayout>
-                }
+                element={<Navigate to={ROUTES.ADMIN_DASHBOARD} replace />}
               />
               <Route
                 path={ROUTES.COURSES}

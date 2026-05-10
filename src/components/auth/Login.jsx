@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../store/authSlice";
 import { authService } from "../../services/authService";
-import { ROUTES } from "../../utils/constants";
+import { ROUTES, ROLES } from "../../utils/constants";
 import {
   extractValidationErrors,
   handleApiError,
@@ -72,12 +72,19 @@ const Login = () => {
 
       console.debug("[Login] User object:", user);
 
+      if (user.role !== ROLES.ADMIN) {
+        await authService.logout();
+        toast.error("Truy cập bị từ chối: Chỉ tài khoản Quản trị viên mới được phép đăng nhập vào hệ thống này.");
+        setLoading(false);
+        return;
+      }
+
       // Save to Redux (localStorage is handled by authService)
       dispatch(loginSuccess(user));
       console.debug("[Login] Dispatched loginSuccess, navigating...");
 
-      // Always go to home first after login (unless redirected from a protected route)
-      navigate(from || ROUTES.HOME, { replace: true });
+      // Always go to Admin dashboard after login
+      navigate(from || ROUTES.ADMIN_DASHBOARD, { replace: true });
     } catch (err) {
       console.error("[Login] Login error:", err);
       const validationErrors = extractValidationErrors(err);
@@ -269,3 +276,7 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
+

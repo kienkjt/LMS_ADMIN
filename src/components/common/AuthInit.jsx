@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userService } from "../../services/userService";
+import { authService } from "../../services/authService";
 import { updateUser, logout } from "../../store/authSlice";
+import { ROLES } from "../../utils/constants";
 
 const AuthInit = ({ children }) => {
   const dispatch = useDispatch();
@@ -12,6 +14,11 @@ const AuthInit = ({ children }) => {
       try {
         const res = await userService.getProfile();
         const profileData = res.data?.data || res.data;
+        if (profileData?.role !== ROLES.ADMIN) {
+          await authService.logout();
+          dispatch(logout());
+          return;
+        }
         dispatch(updateUser(profileData));
       } catch (err) {
         console.error("[AuthInit] Failed to fetch profile:", err);
