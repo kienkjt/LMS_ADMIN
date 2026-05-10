@@ -142,41 +142,33 @@ export const courseService = {
     }
   },
 
-  // Search courses
+ // Search courses
   search: async (data) => {
     console.log('[courseService.search] Called with filters:', data);
     try {
-      // Build search request body matching backend SearchCourseRequest DTO
-      const searchRequest = {
-        keyword: data.keyword,
-        categoryId: data.categoryId,
-        level: data.level,
-        priceMin: data.priceMin,
-        priceMax: data.priceMax,
-        status: data.status,
-      };
-
-      // Build pagination params
-      const params = new URLSearchParams();
       const page = resolvePage(data.page);
       const size = resolveSize(data.size);
-      params.append('page', page);
-      params.append('size', size);
+      const payload = {
+        keyword: data.keyword || undefined,
+        categoryId: data.categoryId || undefined,
+        courseLevel: data.level || undefined,
+        priceMin: data.priceMin !== undefined && data.priceMin !== null ? data.priceMin : undefined,
+        priceMax: data.priceMax !== undefined && data.priceMax !== null ? data.priceMax : undefined,
+      };
 
-      console.log('[courseService.search] Calling backend API POST /v1/courses/search with:', searchRequest);
-      // Backend uses POST endpoint for advanced search
-      const response = await api.post(`/v1/courses/search?${params.toString()}`, searchRequest);
-
+      console.log('[courseService.search] Calling backend API POST /v1/courses/search with payload:', payload);
+      const response = await api.post(`/v1/courses/search?page=${page}&pageSize=${size}`, payload);
+      
       console.log('[courseService.search] API response:', response);
-
+      
       // Handle response format: { success, code, data: { content, totalElements } }
       const pageData = response.data?.data || response.data;
       const courses = pageData?.content || [];
       const totalElements = pageData?.totalElements || 0;
-
+      
       const content = (Array.isArray(courses) ? courses : []).map(formatCourseForCard);
       console.log('[courseService.search] Formatted result:', { content: content.length, total: totalElements });
-
+      
       return { data: { content, totalElements } };
     } catch (error) {
       console.error('[courseService.search] API error, falling back to mock data:', error);
@@ -189,7 +181,6 @@ export const courseService = {
           `${course.title || ''} ${course.description || ''}`.toLowerCase().includes(keyword),
         );
       }
-
       if (data.categoryId) {
         results = results.filter(c => c.categoryId === parseInt(data.categoryId));
       }
