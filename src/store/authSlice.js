@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { USER_KEY } from '../utils/constants';
+import { USER_KEY, TOKEN_KEY, REFRESH_TOKEN_KEY } from '../utils/constants';
 
 const savedUser = localStorage.getItem(USER_KEY);
 
@@ -7,7 +7,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: savedUser ? JSON.parse(savedUser) : null,
-    isAuthenticated: !!localStorage.getItem('lms_access_token'),
+    isAuthenticated: !!localStorage.getItem(TOKEN_KEY),
     loading: false,
     error: null,
   },
@@ -18,16 +18,21 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.loading = false;
       state.error = null;
+      localStorage.setItem(USER_KEY, JSON.stringify(action.payload));
     },
     loginFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
+      localStorage.removeItem(USER_KEY);
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
+      localStorage.removeItem(USER_KEY);
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
     },
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
