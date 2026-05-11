@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../store/authSlice";
 import { authService } from "../../services/authService";
-import { ROUTES, ROLES } from "../../utils/constants";
+import { ROUTES, ROLES, normalizeRole } from "../../utils/constants";
 import {
   extractValidationErrors,
   handleApiError,
@@ -32,7 +32,7 @@ const Login = () => {
       setTimeout(() => setSuccess(""), 5000);
     }
     if (location.state?.registrationSuccess) {
-      setSuccess("✅ Xác thực tài khoản thành công! Vui lòng đăng nhập.");
+      setSuccess("Xác thực tài khoản thành công! Vui lòng đăng nhập.");
       setTimeout(() => setSuccess(""), 5000);
     }
   }, [location.state]);
@@ -72,7 +72,7 @@ const Login = () => {
 
       console.debug("[Login] User object:", user);
 
-      if (user.role !== ROLES.ADMIN) {
+      if (normalizeRole(user.role) !== ROLES.ADMIN) {
         await authService.logout();
         toast.error("Truy cập bị từ chối: Chỉ tài khoản Quản trị viên mới được phép đăng nhập vào hệ thống này.");
         setLoading(false);
@@ -276,6 +276,7 @@ const Login = () => {
 };
 
 export default Login;
+
 
 
 

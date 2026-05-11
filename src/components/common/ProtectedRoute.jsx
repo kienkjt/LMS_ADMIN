@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ROUTES } from '../../utils/constants';
+import { ROUTES, hasRole } from '../../utils/constants';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
   }
 
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
+  if (allowedRoles.length > 0 && !hasRole(user?.role, allowedRoles)) {
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
 
@@ -19,3 +19,4 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 };
 
 export default ProtectedRoute;
+

@@ -7,6 +7,17 @@ export const ROLES = {
   ADMIN: 'ROLE_ADMIN',
 };
 
+export const normalizeRole = (role) => {
+  if (!role || typeof role !== 'string') return role;
+  if (role.startsWith('ROLE_')) return role;
+  return `ROLE_${role}`;
+};
+
+export const hasRole = (role, allowedRoles = []) => {
+  const normalizedRole = normalizeRole(role);
+  return allowedRoles.some((allowedRole) => normalizeRole(allowedRole) === normalizedRole);
+};
+
 // Helper function to get user-friendly role display
 export const getRoleDisplay = (role) => {
   switch (role) {
