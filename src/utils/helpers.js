@@ -1,9 +1,15 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import { vi, enUS } from 'date-fns/locale';
 
-export const formatDate = (date, formatStr = 'dd/MM/yyyy', locale = 'vi') => {
+export const formatDate = (date, formatStr = 'dd/MM/yyyy HH:mm', locale = 'vi') => {
   if (!date) return '';
-  return format(new Date(date), formatStr, { locale: locale === 'vi' ? vi : enUS });
+  const d = new Date(date);
+  
+  // Chuyển đổi timestamp để date-fns format theo múi giờ UTC+7 thay vì múi giờ local của trình duyệt
+  const utc7Epoch = d.getTime() + (d.getTimezoneOffset() * 60000) + (7 * 3600000);
+  const dateInUTC7 = new Date(utc7Epoch);
+
+  return format(dateInUTC7, formatStr, { locale: locale === 'vi' ? vi : enUS });
 };
 
 export const formatDateRelative = (date, locale = 'vi') => {
