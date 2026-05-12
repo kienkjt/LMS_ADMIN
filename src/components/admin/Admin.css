@@ -1149,6 +1149,46 @@
   text-align: center;
 }
 
+.chart-meta-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.chart-axis-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.chart-axis-label:last-child {
+  text-align: right;
+}
+
+.chart-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.chart-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.chart-legend-dot.revenue {
+  background: #0ea5e9;
+}
+
+.chart-legend-dot.enrollment {
+  background: #3b82f6;
+}
+
 /* ─── Notification List ─── */
 .notification-list {
   padding: 0;

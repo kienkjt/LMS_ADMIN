@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { ROUTES } from '../../utils/constants';
 import { adminDashboardService, adminCourseService, adminWithdrawalService } from '../../services/adminService';
 import './Admin.css';
+const formatChartDateLabel = (label) => (label || '').toString().slice(5);
 
 // ─── Simple Bar/Line Chart Component ───
 const MiniChart = ({ data = [], type = 'bar', color = '#7c3aed', height = 120 }) => {
@@ -77,7 +78,7 @@ const MiniChart = ({ data = [], type = 'bar', color = '#7c3aed', height = 120 })
         const x = type === 'bar'
           ? padding.left + i * ((chartW - 4 * (values.length - 1)) / values.length + 4) + ((chartW - 4 * (values.length - 1)) / values.length) / 2
           : padding.left + i * (chartW / Math.max(values.length - 1, 1));
-        ctx.fillText(d.label?.substring(5) || d.label || '', x, rect.height - 4);
+        ctx.fillText(formatChartDateLabel(d.label) || d.label || '', x, rect.height - 4);
       }
     });
   }, [data, type, color, height]);
@@ -138,8 +139,40 @@ const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
       </div>
       <div className="timeseries-x-axis">
         {data.map((item, index) => (
-          <span key={`${item.label}-${index}`}>{(item.label || '').slice(5)}</span>
+          <span key={`${item.label}-${index}`}>{formatChartDateLabel(item.label)}</span>
         ))}
+      </div>
+      <div className="chart-meta-row">
+        <span className="chart-axis-label">Truc tung: Doanh thu (VND)</span>
+        <span className="chart-legend"><span className="chart-legend-dot revenue"></span>Doanh thu</span>
+        <span className="chart-axis-label">Truc hoanh: Ngay</span>
+      </div>
+    </div>
+  );
+};
+
+const EnrollmentMiniChart = ({ data = [], height = 160 }) => {
+  if (!Array.isArray(data) || data.length === 0) return null;
+  const values = data.map((d) => Number(d.count || d.amount || 0));
+  const maxVal = Math.max(...values, 1);
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((rate) => Math.round(maxVal * rate)).reverse();
+
+  return (
+    <div className="timeseries-chart-card">
+      <div className="timeseries-chart-body" style={{ height }}>
+        <div className="timeseries-y-axis">
+          {yTicks.map((tick) => (
+            <span key={tick}>{tick}</span>
+          ))}
+        </div>
+        <div className="timeseries-canvas-wrap">
+          <MiniChart data={data} type="line" color="#3b82f6" height={height} />
+        </div>
+      </div>
+      <div className="chart-meta-row">
+        <span className="chart-axis-label">Truc tung: So ghi danh</span>
+        <span className="chart-legend"><span className="chart-legend-dot enrollment"></span>Ghi danh</span>
+        <span className="chart-axis-label">Truc hoanh: Ngay</span>
       </div>
     </div>
   );
@@ -463,7 +496,7 @@ const AdminDashboard = () => {
                 <h3>Ghi danh hàng ngày</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
-                <MiniChart data={dashData.dailyEnrollments} type="line" color="#3b82f6" height={160} />
+                <EnrollmentMiniChart data={dashData.dailyEnrollments} height={160} />
               </div>
             </div>
           )}
