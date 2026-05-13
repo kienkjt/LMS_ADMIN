@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ROUTES } from '../../utils/constants';
@@ -34,7 +34,7 @@ const buildLast30DaysSeries = (series = [], valueField = 'amount') => {
   });
 };
 
-// ─── Simple Bar/Line Chart Component ───
+// â”€â”€â”€ Simple Bar/Line Chart Component â”€â”€â”€
 const MiniChart = ({ data = [], type = 'bar', color = '#7c3aed', height = 120 }) => {
   const canvasRef = useRef(null);
 
@@ -115,7 +115,113 @@ const MiniChart = ({ data = [], type = 'bar', color = '#7c3aed', height = 120 })
   return <canvas ref={canvasRef} style={{ width: '100%', height }} />;
 };
 
-// ─── Donut Chart Component ───
+// â”€â”€â”€ Donut Chart Component â”€â”€â”€
+const formatCompactNumber = (value) => {
+  const num = Number(value || 0);
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1).replace('.0', '')}M`;
+  if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+  return `${num}`;
+};
+
+const TimeSeriesLineChart = ({
+  data = [],
+  height = 220,
+  valueKey = 'amount',
+  color = '#0ea5e9',
+  unitLabel = 'VND',
+  legendLabel = 'Doanh thu',
+  valueFormatter = (value) => `${value}`,
+}) => {
+  const [hoverIndex, setHoverIndex] = useState(null);
+  if (!Array.isArray(data) || data.length === 0) return null;
+
+  const values = data.map((item) => Number(item?.[valueKey] || 0));
+  const maxVal = Math.max(...values, 1);
+  const yMax = maxVal * 1.15;
+  const yTicks = [1, 0.75, 0.5, 0.25, 0].map((rate) => Math.round(yMax * rate));
+
+  const pointStep = data.length > 1 ? 100 / (data.length - 1) : 100;
+  const points = values.map((value, index) => {
+    const x = index * pointStep;
+    const y = 100 - (value / yMax) * 100;
+    return { x, y, value, label: data[index]?.label || '' };
+  });
+
+  const linePoints = points.map((p) => `${p.x},${p.y}`).join(' ');
+  const areaPoints = `0,100 ${linePoints} 100,100`;
+  const activePoint = hoverIndex === null ? null : points[hoverIndex];
+
+  return (
+    <div className="timeseries-chart-card">
+      <div className="timeseries-chart-body modern" style={{ height }}>
+        <div className="timeseries-y-axis">
+          {yTicks.map((tick) => (
+            <span key={tick}>{formatCompactNumber(tick)}</span>
+          ))}
+        </div>
+        <div className="timeseries-canvas-wrap modern">
+          <svg className="timeseries-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id={`areaGradient-${legendLabel}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={color} stopOpacity="0.35" />
+                <stop offset="100%" stopColor={color} stopOpacity="0.04" />
+              </linearGradient>
+            </defs>
+            {[20, 40, 60, 80].map((line) => (
+              <line key={line} x1="0" y1={line} x2="100" y2={line} className="timeseries-grid-line" />
+            ))}
+            <polyline points={areaPoints} fill={`url(#areaGradient-${legendLabel})`} />
+            <polyline points={linePoints} className="timeseries-line-strong" style={{ stroke: color }} />
+            {points.map((point, index) => (
+              <g key={`${point.label}-${index}`}>
+                <line
+                  x1={point.x}
+                  y1="0"
+                  x2={point.x}
+                  y2="100"
+                  className={`timeseries-hover-line ${hoverIndex === index ? 'active' : ''}`}
+                />
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r={hoverIndex === index ? 1.6 : 1.1}
+                  className={`timeseries-dot ${hoverIndex === index ? 'active' : ''}`}
+                  style={{ fill: color }}
+                />
+                <rect
+                  x={Math.max(point.x - 1.8, 0)}
+                  y="0"
+                  width="3.6"
+                  height="100"
+                  fill="transparent"
+                  onMouseEnter={() => setHoverIndex(index)}
+                  onMouseLeave={() => setHoverIndex(null)}
+                />
+              </g>
+            ))}
+          </svg>
+          {activePoint && (
+            <div className="timeseries-tooltip" style={{ left: `${activePoint.x}%` }}>
+              <div>{formatChartDateLabel(activePoint.label)}</div>
+              <strong>{valueFormatter(activePoint.value)}</strong>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="timeseries-x-axis compact">
+        {data.map((item, index) => (
+          <span key={`${item.label}-${index}`}>{index % 5 === 0 || index === data.length - 1 ? formatChartDateLabel(item.label) : ''}</span>
+        ))}
+      </div>
+      <div className="chart-meta-row">
+        <span className="chart-axis-label">Đơn v?: {unitLabel}</span>
+        <span className="chart-legend"><span className="chart-legend-dot" style={{ background: color }}></span>{legendLabel}</span>
+        <span className="chart-axis-label">30 ngày g?n nh?t</span>
+      </div>
+    </div>
+  );
+};
+
 const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
   if (!Array.isArray(data) || data.length === 0) return null;
 
@@ -123,105 +229,40 @@ const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
   const maxVal = Math.max(...values, 1);
   const minVal = Math.min(...values, 0);
   const total = values.reduce((sum, value) => sum + value, 0);
-  const pointStep = 100 / Math.max(values.length - 1, 1);
-  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((rate) => Math.round(maxVal * rate));
-  const linePoints = values.map((value, index) => {
-    const x = index * pointStep;
-    const y = 100 - (value / maxVal) * 100;
-    return `${x},${y}`;
-  }).join(' ');
-  const areaPoints = `0,100 ${linePoints} 100,100`;
 
   return (
-    <div className="timeseries-chart-card enrollment-chart-card">
+    <div className="timeseries-chart-card">
       <div className="timeseries-chart-kpis">
-        <div><span>Tổng</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</strong></div>
-        <div><span>Cao nhất</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(maxVal)}</strong></div>
-        <div><span>Thấp nhất</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(minVal)}</strong></div>
+        <div><span>T?ng</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</strong></div>
+        <div><span>Cao nh?t</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(maxVal)}</strong></div>
+        <div><span>Th?p nh?t</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(minVal)}</strong></div>
       </div>
-      <div className="timeseries-chart-body" style={{ height }}>
-        <div className="timeseries-y-axis">
-          {yTicks.slice().reverse().map((tick) => (
-            <span key={tick}>{(tick / 1000000).toFixed(0)}M</span>
-          ))}
-        </div>
-        <div className="timeseries-canvas-wrap">
-          <svg style={{ width: '100%', height: '100%', display: 'block' }}>
-            <defs>
-              <linearGradient id="revenueBarGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0ea5e9" stopOpacity="1" />
-                <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.4" />
-              </linearGradient>
-            </defs>
-            {[20, 40, 60, 80].map((line) => (
-              <line key={line} x1="0%" y1={`${line}%`} x2="100%" y2={`${line}%`} className="timeseries-grid-line" />
-            ))}
-            {values.map((value, index) => {
-              const n = values.length || 1;
-              const slotW = 100 / n;
-              const barW = Math.min(slotW * 0.5, 8);
-              const x = index * slotW + (slotW - barW) / 2;
-              const barH = (value / maxVal) * 100;
-              const y = 100 - barH;
-              if (barH === 0) return null;
-              return (
-                <rect 
-                  key={index} 
-                  x={`${x}%`} 
-                  y={`${y}%`} 
-                  width={`${barW}%`} 
-                  height={`${barH}%`} 
-                  fill="url(#revenueBarGradient)" 
-                  rx="3"
-                />
-              );
-            })}
-          </svg>
-        </div>
-      </div>
-      <div className="timeseries-x-axis">
-        {data.map((item, index) => (
-          <span key={`${item.label}-${index}`}>{formatChartDateLabel(item.label)}</span>
-        ))}
-      </div>
-      <div className="chart-meta-row">
-        <span className="chart-axis-label">Đơn vị: VND</span>
-        <span className="chart-legend"><span className="chart-legend-dot revenue"></span>Doanh thu</span>
-        <span className="chart-axis-label">Theo ngày</span>
-      </div>
+      <TimeSeriesLineChart
+        data={data}
+        height={height}
+        valueKey="amount"
+        color="#0ea5e9"
+        unitLabel="VND"
+        legendLabel="Doanh thu"
+        valueFormatter={(value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value)}
+      />
     </div>
   );
 };
 
 const EnrollmentMiniChart = ({ data = [], height = 160 }) => {
-  if (!Array.isArray(data) || data.length === 0) return null;
-  const values = data.map((d) => Number(d.count || d.amount || 0));
-  const maxVal = Math.max(...values, 1) * 1.2;
-  const yTicks = [0, 0.25, 0.5, 0.75, 1]
-    .map((rate) => Math.round(maxVal * rate))
-    .reverse();
-
   return (
-    <div className="timeseries-chart-card">
-      <div className="timeseries-chart-body" style={{ height }}>
-        <div className="timeseries-y-axis">
-          {yTicks.map((tick) => (
-            <span key={tick}>{tick}</span>
-          ))}
-        </div>
-        <div className="timeseries-canvas-wrap">
-          <MiniChart data={data} type="line" color="#3b82f6" height={height} />
-        </div>
-      </div>
-      <div className="chart-meta-row">
-        <span className="chart-axis-label">Đơn vị: lượt ghi danh</span>
-        <span className="chart-legend"><span className="chart-legend-dot enrollment"></span>Ghi danh</span>
-        <span className="chart-axis-label">Theo ngày</span>
-      </div>
-    </div>
+    <TimeSeriesLineChart
+      data={data}
+      height={height}
+      valueKey="count"
+      color="#2563eb"
+      unitLabel="lư?t ghi danh"
+      legendLabel="Ghi danh"
+      valueFormatter={(value) => `${Number(value || 0).toLocaleString('vi-VN')} lư?t`}
+    />
   );
 };
-
 const DonutChart = ({ data = [], size = 140 }) => {
   const canvasRef = useRef(null);
   const colors = ['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#8b5cf6'];
@@ -264,7 +305,7 @@ const DonutChart = ({ data = [], size = 140 }) => {
     ctx.fillText(total.toLocaleString(), cx, cy - 6);
     ctx.fillStyle = '#9ca3af';
     ctx.font = '10px Inter, sans-serif';
-    ctx.fillText('Tổng', cx, cy + 10);
+    ctx.fillText('Tá»•ng', cx, cy + 10);
   }, [data, size]);
 
   return (
@@ -333,7 +374,7 @@ const AdminDashboard = () => {
         setReportData(reportRes.value.data || null);
       }
     } catch (err) {
-      setError('Không thể tải dữ liệu dashboard');
+      setError('KhĂ´ng thá»ƒ táº£i dá»¯ liá»‡u dashboard');
       console.error('Failed to load dashboard:', err);
     } finally {
       setLoading(false);
@@ -341,7 +382,7 @@ const AdminDashboard = () => {
   };
 
   const formatPrice = (price) => {
-    if (!price && price !== 0) return '0 ₫';
+    if (!price && price !== 0) return '0 â‚«';
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
@@ -361,16 +402,16 @@ const AdminDashboard = () => {
   const handleUpdatePlatformFee = async () => {
     const feeNumber = Number(platformFee);
     if (!Number.isFinite(feeNumber) || feeNumber < 0 || feeNumber > 100) {
-      toast.error('Phí nền tảng phải từ 0 đến 100');
+      toast.error('PhĂ­ ná»n táº£ng pháº£i tá»« 0 Ä‘áº¿n 100');
       return;
     }
     try {
       setSavingPlatformFee(true);
       const res = await adminDashboardService.updatePlatformFee(feeNumber);
       setPlatformFee(res.data?.platformFeePercent ?? feeNumber);
-      toast.success('Đã cập nhật phí nền tảng và gửi thông báo tới giảng viên');
+      toast.success('ÄĂ£ cáº­p nháº­t phĂ­ ná»n táº£ng vĂ  gá»­i thĂ´ng bĂ¡o tá»›i giáº£ng viĂªn');
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Không thể cập nhật phí nền tảng');
+      toast.error(err?.response?.data?.message || 'KhĂ´ng thá»ƒ cáº­p nháº­t phĂ­ ná»n táº£ng');
     } finally {
       setSavingPlatformFee(false);
     }
@@ -380,7 +421,7 @@ const AdminDashboard = () => {
     return (
       <div className="admin-loading">
         <div className="spinner"></div>
-        <p>Đang tải dữ liệu...</p>
+        <p>Äang táº£i dá»¯ liá»‡u...</p>
       </div>
     );
   }
@@ -407,14 +448,14 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <div className="admin-page-header">
         <div>
-          <h1 className="admin-page-title">Tổng quan</h1>
-          <p className="admin-page-subtitle">Chào mừng bạn đến bảng điều khiển quản trị</p>
+          <h1 className="admin-page-title">Tá»•ng quan</h1>
+          <p className="admin-page-subtitle">ChĂ o má»«ng báº¡n Ä‘áº¿n báº£ng Ä‘iá»u khiá»ƒn quáº£n trá»‹</p>
         </div>
         <button className="btn btn-primary btn-sm" onClick={fetchDashboardData}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
           </svg>
-          Làm mới
+          LĂ m má»›i
         </button>
       </div>
 
@@ -426,38 +467,38 @@ const AdminDashboard = () => {
 
       <div className="admin-card" style={{ marginBottom: 24 }}>
         <div className="admin-card-header">
-          <h3>Báo cáo theo tháng/năm</h3>
+          <h3>BĂ¡o cĂ¡o theo thĂ¡ng/nÄƒm</h3>
           <div style={{ display: 'flex', gap: 8 }}>
             <select className="form-input" value={reportMonth} onChange={(e) => setReportMonth(Number(e.target.value))}>
               {Array.from({ length: 12 }, (_, idx) => idx + 1).map((month) => (
-                <option key={month} value={month}>Tháng {month}</option>
+                <option key={month} value={month}>ThĂ¡ng {month}</option>
               ))}
             </select>
             <select className="form-input" value={reportYear} onChange={(e) => setReportYear(Number(e.target.value))}>
               {selectableYears.map((year) => (
-                <option key={year} value={year}>Năm {year}</option>
+                <option key={year} value={year}>NÄƒm {year}</option>
               ))}
             </select>
           </div>
         </div>
         <div className="admin-card-body" style={{ padding: '16px 20px' }}>
           <div className="admin-dashboard-grid">
-            <div className="admin-stat-mini"><span>Doanh thu kỳ: </span><strong>{formatPrice(reportData?.revenue ?? 0)}</strong></div>
-            <div className="admin-stat-mini"><span>Đơn hoàn tất: </span><strong>{formatNumber(reportData?.completedOrders ?? 0)}</strong></div>
-            <div className="admin-stat-mini"><span>Học viên mới: </span><strong>{formatNumber(reportData?.newStudents ?? 0)}</strong></div>
-            <div className="admin-stat-mini"><span>Giảng viên mới: </span><strong>{formatNumber(reportData?.newInstructors ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Doanh thu ká»³: </span><strong>{formatPrice(reportData?.revenue ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>ÄÆ¡n hoĂ n táº¥t: </span><strong>{formatNumber(reportData?.completedOrders ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Há»c viĂªn má»›i: </span><strong>{formatNumber(reportData?.newStudents ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Giáº£ng viĂªn má»›i: </span><strong>{formatNumber(reportData?.newInstructors ?? 0)}</strong></div>
           </div>
         </div>
       </div>
 
       <div className="admin-card" style={{ marginBottom: 24 }}>
         <div className="admin-card-header">
-          <h3>Cấu hình hệ thống</h3>
+          <h3>Cáº¥u hĂ¬nh há»‡ thá»‘ng</h3>
         </div>
         <div className="admin-card-body" style={{ padding: '20px 24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <label className="form-label" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-              Phí nền tảng (áp dụng cho tất cả giao dịch)
+              PhĂ­ ná»n táº£ng (Ă¡p dá»¥ng cho táº¥t cáº£ giao dá»‹ch)
             </label>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <div style={{ position: 'relative', width: 160 }}>
@@ -474,14 +515,14 @@ const AdminDashboard = () => {
                 <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', fontWeight: 500 }}>%</span>
               </div>
               <button className="btn btn-primary" onClick={handleUpdatePlatformFee} disabled={savingPlatformFee}>
-                {savingPlatformFee ? 'Đang lưu...' : 'Lưu & thông báo'}
+                {savingPlatformFee ? 'Äang lÆ°u...' : 'LÆ°u & thĂ´ng bĂ¡o'}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ─── Main Stats Grid ─── */}
+      {/* â”€â”€â”€ Main Stats Grid â”€â”€â”€ */}
       <div className="admin-stats-grid">
         <div className="admin-stat-card stat-purple">
           <div className="stat-icon">
@@ -493,11 +534,11 @@ const AdminDashboard = () => {
           </div>
           <div className="stat-content">
             <div className="stat-value">{formatNumber(stats.totalUsers)}</div>
-            <div className="stat-label">Tổng người dùng</div>
+            <div className="stat-label">Tá»•ng ngÆ°á»i dĂ¹ng</div>
             <div className="stat-sub">
-              <span>{formatNumber(stats.totalStudents)} Học viên</span>
-              <span>•</span>
-              <span>{formatNumber(stats.totalInstructors)} Giảng viên</span>
+              <span>{formatNumber(stats.totalStudents)} Há»c viĂªn</span>
+              <span>â€¢</span>
+              <span>{formatNumber(stats.totalInstructors)} Giáº£ng viĂªn</span>
             </div>
           </div>
         </div>
@@ -511,14 +552,14 @@ const AdminDashboard = () => {
           </div>
           <div className="stat-content">
             <div className="stat-value">{formatNumber(stats.totalCourses)}</div>
-            <div className="stat-label">Tổng khóa học</div>
+            <div className="stat-label">Tá»•ng khĂ³a há»c</div>
             <div className="stat-sub">
-              <span>{formatNumber(stats.publishedCourses)} Đã xuất bản</span>
-              <span>•</span>
-              <span>{formatNumber(stats.pendingReviewCourses)} Chờ duyệt</span>
+              <span>{formatNumber(stats.publishedCourses)} ÄĂ£ xuáº¥t báº£n</span>
+              <span>â€¢</span>
+              <span>{formatNumber(stats.pendingReviewCourses)} Chá» duyá»‡t</span>
             </div>
           </div>
-          <Link to={ROUTES.ADMIN_COURSES} className="stat-link">Xem tất cả →</Link>
+          <Link to={ROUTES.ADMIN_COURSES} className="stat-link">Xem táº¥t cáº£ â†’</Link>
         </div>
 
         <div className="admin-stat-card stat-green">
@@ -530,9 +571,9 @@ const AdminDashboard = () => {
           </div>
           <div className="stat-content">
             <div className="stat-value">{formatPrice(stats.totalRevenue)}</div>
-            <div className="stat-label">Tổng doanh thu</div>
+            <div className="stat-label">Tá»•ng doanh thu</div>
             <div className="stat-sub">
-              <span>TB: {formatPrice(stats.averageOrderValue)}/đơn</span>
+              <span>TB: {formatPrice(stats.averageOrderValue)}/Ä‘Æ¡n</span>
             </div>
           </div>
         </div>
@@ -546,24 +587,24 @@ const AdminDashboard = () => {
           </div>
           <div className="stat-content">
             <div className="stat-value">{formatNumber(stats.totalOrders)}</div>
-            <div className="stat-label">Tổng đơn hàng</div>
+            <div className="stat-label">Tá»•ng Ä‘Æ¡n hĂ ng</div>
             <div className="stat-sub">
-              <span>{formatNumber(stats.completedOrders)} Hoàn thành</span>
-              <span>•</span>
+              <span>{formatNumber(stats.completedOrders)} HoĂ n thĂ nh</span>
+              <span>â€¢</span>
               <span>{formatNumber(stats.totalEnrollments)} Ghi danh</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ─── Charts Row ─── */}
+      {/* â”€â”€â”€ Charts Row â”€â”€â”€ */}
       {chartDataSource && (
         <div className="admin-dashboard-grid" style={{ marginBottom: 24 }}>
           {/* Daily Revenue Chart */}
           {last30DaysRevenue.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
-                <h3>Doanh thu hàng ngày</h3>
+                <h3>Doanh thu hĂ ng ngĂ y</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
                 <TimeSeriesRevenueChart data={last30DaysRevenue} height={220} />
@@ -575,7 +616,7 @@ const AdminDashboard = () => {
           {last30DaysEnrollments.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
-                <h3>Ghi danh hàng ngày</h3>
+                <h3>Ghi danh hĂ ng ngĂ y</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
                 <EnrollmentMiniChart data={last30DaysEnrollments} height={160} />
@@ -587,7 +628,7 @@ const AdminDashboard = () => {
           {dashData.courseStatusDistribution?.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
-                <h3>Phân bố trạng thái khóa học</h3>
+                <h3>PhĂ¢n bá»‘ tráº¡ng thĂ¡i khĂ³a há»c</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '20px' }}>
                 <DonutChart data={dashData.courseStatusDistribution} />
@@ -599,7 +640,7 @@ const AdminDashboard = () => {
           {dashData.orderStatusDistribution?.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
-                <h3>Phân bố trạng thái đơn hàng</h3>
+                <h3>PhĂ¢n bá»‘ tráº¡ng thĂ¡i Ä‘Æ¡n hĂ ng</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '20px' }}>
                 <DonutChart data={dashData.orderStatusDistribution} />
@@ -609,11 +650,11 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* ─── Top Selling Courses ─── */}
+      {/* â”€â”€â”€ Top Selling Courses â”€â”€â”€ */}
       {chartDataSource?.topSellingCourses?.length > 0 && (
         <div className="admin-card" style={{ marginBottom: 24 }}>
           <div className="admin-card-header">
-            <h3>Khóa học bán chạy nhất</h3>
+            <h3>KhĂ³a há»c bĂ¡n cháº¡y nháº¥t</h3>
           </div>
           <div className="admin-card-body">
             <div className="admin-table-wrapper">
@@ -621,10 +662,10 @@ const AdminDashboard = () => {
                 <thead>
                   <tr>
                     <th style={{ textAlign: 'left', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>#</th>
-                    <th style={{ textAlign: 'left', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>KHÓA HỌC</th>
-                    <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>ĐÃ BÁN</th>
-                    <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>HỌC VIÊN</th>
-                    <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>ĐÁNH GIÁ</th>
+                    <th style={{ textAlign: 'left', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>KHĂ“A Há»ŒC</th>
+                    <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>ÄĂƒ BĂN</th>
+                    <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>Há»ŒC VIĂN</th>
+                    <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>ÄĂNH GIĂ</th>
                     <th style={{ textAlign: 'right', padding: '12px 16px', background: 'var(--bg-tertiary)', fontSize: 11 }}>DOANH THU</th>
                   </tr>
                 </thead>
@@ -642,7 +683,7 @@ const AdminDashboard = () => {
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                           </svg>
-                          {course.avgRating?.toFixed(1) || '—'}
+                          {course.avgRating?.toFixed(1) || 'â€”'}
                         </div>
                       </td>
                       <td style={{ padding: '14px 16px', textAlign: 'right' }}>
@@ -657,14 +698,14 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* ─── Recent Data Grid ─── */}
+      {/* â”€â”€â”€ Recent Data Grid â”€â”€â”€ */}
       <div className="admin-dashboard-grid">
         {/* Pending Courses */}
         <div className="admin-card">
           <div className="admin-card-header">
-            <h3>Khóa học chờ duyệt</h3>
+            <h3>KhĂ³a há»c chá» duyá»‡t</h3>
             <Link to={ROUTES.ADMIN_COURSES} className="admin-card-link">
-              Xem tất cả
+              Xem táº¥t cáº£
             </Link>
           </div>
           <div className="admin-card-body">
@@ -673,7 +714,7 @@ const AdminDashboard = () => {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p>Không có khóa học nào chờ duyệt</p>
+                <p>KhĂ´ng cĂ³ khĂ³a há»c nĂ o chá» duyá»‡t</p>
               </div>
             ) : (
               <div className="admin-list">
@@ -695,7 +736,7 @@ const AdminDashboard = () => {
                       <div>
                         <div className="admin-list-item-title">{course.title}</div>
                         <div className="admin-list-item-meta">
-                          <span className="badge badge-warning">Chờ duyệt</span>
+                          <span className="badge badge-warning">Chá» duyá»‡t</span>
                           <span>{formatPrice(course.price)}</span>
                         </div>
                       </div>
@@ -711,9 +752,9 @@ const AdminDashboard = () => {
         {/* Pending Withdrawals */}
         <div className="admin-card">
           <div className="admin-card-header">
-            <h3>Yêu cầu rút tiền chờ xử lý</h3>
+            <h3>YĂªu cáº§u rĂºt tiá»n chá» xá»­ lĂ½</h3>
             <Link to={ROUTES.ADMIN_WITHDRAWALS} className="admin-card-link">
-              Xem tất cả
+              Xem táº¥t cáº£
             </Link>
           </div>
           <div className="admin-card-body">
@@ -723,7 +764,7 @@ const AdminDashboard = () => {
                   <line x1="12" y1="1" x2="12" y2="23" />
                   <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
-                <p>Không có yêu cầu rút tiền nào</p>
+                <p>KhĂ´ng cĂ³ yĂªu cáº§u rĂºt tiá»n nĂ o</p>
               </div>
             ) : (
               <div className="admin-list">
@@ -737,15 +778,15 @@ const AdminDashboard = () => {
                         </svg>
                       </div>
                       <div>
-                        <div className="admin-list-item-title">{wd.accountHolder || 'Giảng viên'}</div>
+                        <div className="admin-list-item-title">{wd.accountHolder || 'Giáº£ng viĂªn'}</div>
                         <div className="admin-list-item-meta">
                           <span className="text-bold">{formatPrice(wd.requestedAmount)}</span>
-                          <span>•</span>
+                          <span>â€¢</span>
                           <span>{wd.bankName}</span>
                         </div>
                       </div>
                     </div>
-                    <span className="badge badge-warning">Chờ xử lý</span>
+                    <span className="badge badge-warning">Chá» xá»­ lĂ½</span>
                   </div>
                 ))}
               </div>
@@ -758,3 +799,5 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+
