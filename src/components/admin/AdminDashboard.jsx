@@ -412,10 +412,10 @@ const AdminDashboard = () => {
         </div>
         <div className="admin-card-body" style={{ padding: '16px 20px' }}>
           <div className="admin-dashboard-grid">
-            <div className="admin-stat-mini"><span>Doanh thu kỳ</span><strong>{formatPrice(reportData?.revenue ?? 0)}</strong></div>
-            <div className="admin-stat-mini"><span>Đơn hoàn tất</span><strong>{formatNumber(reportData?.completedOrders ?? 0)}</strong></div>
-            <div className="admin-stat-mini"><span>Học viên mới</span><strong>{formatNumber(reportData?.newStudents ?? 0)}</strong></div>
-            <div className="admin-stat-mini"><span>Giảng viên mới</span><strong>{formatNumber(reportData?.newInstructors ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Doanh thu kỳ: </span><strong>{formatPrice(reportData?.revenue ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Đơn hoàn tất: </span><strong>{formatNumber(reportData?.completedOrders ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Học viên mới: </span><strong>{formatNumber(reportData?.newStudents ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Giảng viên mới: </span><strong>{formatNumber(reportData?.newInstructors ?? 0)}</strong></div>
           </div>
         </div>
       </div>
