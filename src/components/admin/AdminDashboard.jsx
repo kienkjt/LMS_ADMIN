@@ -137,7 +137,10 @@ const TimeSeriesLineChart = ({
 
   const values = data.map((item) => Number(item?.[valueKey] || 0));
   const maxVal = Math.max(...values, 1);
-  const yMax = maxVal * 1.15;
+  const yMax =
+  maxVal <= 10
+    ? Math.ceil(maxVal + 2)
+    : Math.ceil(maxVal * 1.25);
   const yTicks = [1, 0.75, 0.5, 0.25, 0].map((rate) => Math.round(yMax * rate));
 
   const pointStep = data.length > 1 ? 100 / (data.length - 1) : 100;
@@ -184,7 +187,7 @@ const TimeSeriesLineChart = ({
                 <circle
                   cx={point.x}
                   cy={point.y}
-                  r={hoverIndex === index ? 1.6 : 1.1}
+                  r={hoverIndex === index ? 2.1 : 1.4}
                   className={`timeseries-dot ${hoverIndex === index ? 'active' : ''}`}
                   style={{ fill: color }}
                 />
