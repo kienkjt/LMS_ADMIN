@@ -118,22 +118,35 @@ const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
           ))}
         </div>
         <div className="timeseries-canvas-wrap">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="timeseries-svg">
+          <svg style={{ width: '100%', height: '100%', display: 'block' }}>
             <defs>
-              <linearGradient id="revenueAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.04" />
+              <linearGradient id="revenueBarGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#0ea5e9" stopOpacity="1" />
+                <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.4" />
               </linearGradient>
             </defs>
             {[20, 40, 60, 80].map((line) => (
-              <line key={line} x1="0" y1={line} x2="100" y2={line} className="timeseries-grid-line" />
+              <line key={line} x1="0%" y1={`${line}%`} x2="100%" y2={`${line}%`} className="timeseries-grid-line" />
             ))}
-            <polygon points={areaPoints} className="timeseries-area" />
-            <polyline points={linePoints} className="timeseries-line" />
             {values.map((value, index) => {
-              const x = index * pointStep;
-              const y = 100 - (value / maxVal) * 100;
-              return <circle key={index} cx={x} cy={y} r="1.2" className="timeseries-dot" />;
+              const n = values.length || 1;
+              const slotW = 100 / n;
+              const barW = Math.min(slotW * 0.5, 8);
+              const x = index * slotW + (slotW - barW) / 2;
+              const barH = (value / maxVal) * 100;
+              const y = 100 - barH;
+              if (barH === 0) return null;
+              return (
+                <rect 
+                  key={index} 
+                  x={`${x}%`} 
+                  y={`${y}%`} 
+                  width={`${barW}%`} 
+                  height={`${barH}%`} 
+                  fill="url(#revenueBarGradient)" 
+                  rx="3"
+                />
+              );
             })}
           </svg>
         </div>
