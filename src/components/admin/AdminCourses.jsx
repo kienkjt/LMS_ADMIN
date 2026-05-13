@@ -172,17 +172,23 @@ const AdminCourses = () => {
 
   // Students
   const openStudentsModal = async (course, page = 0) => {
+    const courseId = course?.id || course?.courseId;
+    if (!courseId) {
+      toast.error('Không tìm thấy khóa học hợp lệ');
+      return;
+    }
+
     setStudentsCourse(course);
     setShowStudentsModal(true);
     setStudentsPage(page);
     setStudentsLoading(true);
     try {
-      const res = await adminCourseService.getStudentsByCourse(course.id, { page, size: 10 });
+      const res = await adminCourseService.getStudentsByCourse(courseId, { page, size: 10 });
       setStudents(res.data.content);
       setStudentsTotalPages(res.data.totalPages);
       setStudentsTotalElements(res.data.totalElements);
     } catch (e) {
-      toast.error('Không thể tải danh sách học viên');
+      toast.error(e?.response?.data?.message || 'Không thể tải danh sách học viên');
     } finally {
       setStudentsLoading(false);
     }
@@ -710,3 +716,4 @@ const AdminCourses = () => {
 };
 
 export default AdminCourses;
+

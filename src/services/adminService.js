@@ -105,6 +105,8 @@ export const adminCategoryService = {
 // ============ Course Management (Admin) ============
 
 export const adminCourseService = {
+  // Some deployments treat `page` as 1-based for this endpoint and return 404 for page=0.
+  _studentsPageMode: 'unknown', // unknown | zero_based | one_based
   /**
    * Search managed courses (Admin/Instructor)
    * POST /v1/courses/management/search?page=1&pageSize=10
@@ -193,13 +195,36 @@ export const adminCourseService = {
   getStudentsByCourse: async (courseId, params = {}) => {
     try {
       const { page = 0, size = 10 } = params;
-      const queryParams = new URLSearchParams();
-      queryParams.append('page', page);
-      queryParams.append('size', size);
+      const buildUrl = (pageParam) => {
+        const queryParams = new URLSearchParams();
+        queryParams.append('page', pageParam);
+        queryParams.append('size', size);
+        return `/v1/learning/instructor/courses/${courseId}/students?${queryParams.toString()}`;
+      };
 
-      const response = await api.get(
-        `/v1/learning/instructor/courses/${courseId}/students?${queryParams.toString()}`
-      );
+      const requestedPage =
+        adminCourseService._studentsPageMode === 'one_based' ? page + 1 : page;
+
+      let response;
+      try {
+        response = await api.get(buildUrl(requestedPage));
+        if (adminCourseService._studentsPageMode === 'unknown') {
+          adminCourseService._studentsPageMode = 'zero_based';
+        }
+      } catch (error) {
+        const shouldRetryOneBased =
+          adminCourseService._studentsPageMode === 'unknown' &&
+          page === 0 &&
+          error?.response?.status === 404;
+
+        if (!shouldRetryOneBased) {
+          throw error;
+        }
+
+        response = await api.get(buildUrl(page + 1));
+        adminCourseService._studentsPageMode = 'one_based';
+      }
+
       const pageData = response.data?.data || response.data;
       return {
         data: {
