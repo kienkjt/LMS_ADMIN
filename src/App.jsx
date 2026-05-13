@@ -453,7 +453,6 @@ function App() {
                 }
               />
               <Route
-              <Route
                 path={ROUTES.ADMIN_REVIEWS}
                 element={
                   <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
@@ -465,6 +464,8 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+              <Route
                 path={ROUTES.ADMIN_PROFILE}
                 element={
                   <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
