@@ -8,11 +8,22 @@ import './Admin.css';
 /* ─── Helpers ─── */
 const formatChartDateLabel = (label) => (label || '').toString().slice(5);
 
+const formatLocalDateKey = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const toDateKey = (value) => {
   if (!value) return '';
+  if (typeof value === 'string') {
+    const dateOnly = value.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
+    if (dateOnly) return dateOnly;
+  }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
-  return date.toISOString().slice(0, 10);
+  return formatLocalDateKey(date);
 };
 
 const buildLast30DaysSeries = (series = [], valueField = 'amount') => {
@@ -27,7 +38,7 @@ const buildLast30DaysSeries = (series = [], valueField = 'amount') => {
   return Array.from({ length: 30 }, (_, index) => {
     const day = new Date(today);
     day.setDate(today.getDate() - (29 - index));
-    const key = day.toISOString().slice(0, 10);
+    const key = formatLocalDateKey(day);
     return { label: key, [valueField]: sourceByDate.get(key) ?? 0 };
   });
 };
