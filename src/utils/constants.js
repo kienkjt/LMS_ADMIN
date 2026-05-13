@@ -106,6 +106,7 @@ export const ROUTES = {
   INSTRUCTOR_STUDENTS: '/instructor/students',
   INSTRUCTOR_QUIZ: '/instructor/courses/:courseId/quiz',
   INSTRUCTOR_REVENUE: '/instructor/revenue',
+  INSTRUCTOR_REPORTS: '/instructor/reports',
   INSTRUCTOR_QA: '/instructor/qa',
 
   // Admin

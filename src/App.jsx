@@ -42,6 +42,9 @@ const StudentDashboard = lazy(() => import("./components/student/Dashboard"));
 const InstructorDashboard = lazy(
   () => import("./components/instructor/Dashboard"),
 );
+const InstructorReports = lazy(
+  () => import("./components/instructor/InstructorReports"),
+);
 const CoursesManagement = lazy(
   () => import("./components/instructor/CoursesManagement"),
 );
@@ -354,6 +357,18 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path={ROUTES.INSTRUCTOR_REPORTS}
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.INSTRUCTOR]}>
+                    <WithDashboard>
+                      <Suspense fallback={<PageLoader />}>
+                        <InstructorReports />
+                      </Suspense>
+                    </WithDashboard>
+                  </ProtectedRoute>
+                }
+              />
 
               {/* ── Admin ── */}
               <Route
@@ -464,7 +479,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path={ROUTES.ADMIN_PROFILE}
                 element={

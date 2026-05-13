@@ -257,26 +257,32 @@ const DonutChart = ({ data = [], size = 140 }) => {
 
 const AdminDashboard = () => {
   const [dashData, setDashData] = useState(null);
+  const [reportData, setReportData] = useState(null);
   const [recentCourses, setRecentCourses] = useState([]);
   const [recentWithdrawals, setRecentWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [platformFee, setPlatformFee] = useState('');
   const [savingPlatformFee, setSavingPlatformFee] = useState(false);
+  const currentDate = new Date();
+  const [reportYear, setReportYear] = useState(currentDate.getFullYear());
+  const [reportMonth, setReportMonth] = useState(currentDate.getMonth() + 1);
+  const selectableYears = Array.from({ length: 6 }, (_, i) => currentDate.getFullYear() - i);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [reportYear, reportMonth]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const [dashRes, pendingCoursesRes, withdrawalsRes, platformFeeRes] = await Promise.allSettled([
+      const [dashRes, pendingCoursesRes, withdrawalsRes, platformFeeRes, reportRes] = await Promise.allSettled([
         adminDashboardService.getStats(),
         adminCourseService.searchManagedCourses({ status: 'PENDING_REVIEW' }, { page: 1, pageSize: 5 }),
         adminWithdrawalService.getPending({ page: 0, size: 5 }),
         adminDashboardService.getPlatformFee(),
+        adminDashboardService.getReport({ year: reportYear, month: reportMonth }),
       ]);
 
       if (dashRes.status === 'fulfilled') {
@@ -294,6 +300,9 @@ const AdminDashboard = () => {
       if (platformFeeRes.status === 'fulfilled') {
         const fee = platformFeeRes.value.data?.platformFeePercent;
         setPlatformFee(fee ?? '');
+      }
+      if (reportRes.status === 'fulfilled') {
+        setReportData(reportRes.value.data || null);
       }
     } catch (err) {
       setError('Không thể tải dữ liệu dashboard');
@@ -362,6 +371,7 @@ const AdminDashboard = () => {
     totalRevenue: dashData?.totalRevenue ?? 0,
     averageOrderValue: dashData?.averageOrderValue ?? 0,
   };
+  const chartDataSource = reportData || dashData;
 
   return (
     <div className="admin-dashboard">
@@ -383,6 +393,32 @@ const AdminDashboard = () => {
           <p>{error}</p>
         </div>
       )}
+
+      <div className="admin-card" style={{ marginBottom: 24 }}>
+        <div className="admin-card-header">
+          <h3>Báo cáo theo tháng/năm</h3>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <select className="form-input" value={reportMonth} onChange={(e) => setReportMonth(Number(e.target.value))}>
+              {Array.from({ length: 12 }, (_, idx) => idx + 1).map((month) => (
+                <option key={month} value={month}>Tháng {month}</option>
+              ))}
+            </select>
+            <select className="form-input" value={reportYear} onChange={(e) => setReportYear(Number(e.target.value))}>
+              {selectableYears.map((year) => (
+                <option key={year} value={year}>Năm {year}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="admin-card-body" style={{ padding: '16px 20px' }}>
+          <div className="admin-dashboard-grid">
+            <div className="admin-stat-mini"><span>Doanh thu kỳ</span><strong>{formatPrice(reportData?.revenue ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Đơn hoàn tất</span><strong>{formatNumber(reportData?.completedOrders ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Học viên mới</span><strong>{formatNumber(reportData?.newStudents ?? 0)}</strong></div>
+            <div className="admin-stat-mini"><span>Giảng viên mới</span><strong>{formatNumber(reportData?.newInstructors ?? 0)}</strong></div>
+          </div>
+        </div>
+      </div>
 
       <div className="admin-card" style={{ marginBottom: 24 }}>
         <div className="admin-card-header">
@@ -491,28 +527,28 @@ const AdminDashboard = () => {
       </div>
 
       {/* ─── Charts Row ─── */}
-      {dashData && (
+      {chartDataSource && (
         <div className="admin-dashboard-grid" style={{ marginBottom: 24 }}>
           {/* Daily Revenue Chart */}
-          {dashData.dailyRevenue?.length > 0 && (
+          {chartDataSource.dailyRevenue?.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
                 <h3>Doanh thu hàng ngày</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
-                <TimeSeriesRevenueChart data={dashData.dailyRevenue} height={220} />
+                <TimeSeriesRevenueChart data={chartDataSource.dailyRevenue} height={220} />
               </div>
             </div>
           )}
 
           {/* Daily Enrollments Chart */}
-          {dashData.dailyEnrollments?.length > 0 && (
+          {chartDataSource.dailyEnrollments?.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
                 <h3>Ghi danh hàng ngày</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
-                <EnrollmentMiniChart data={dashData.dailyEnrollments} height={160} />
+                <EnrollmentMiniChart data={chartDataSource.dailyEnrollments} height={160} />
               </div>
             </div>
           )}
@@ -544,7 +580,7 @@ const AdminDashboard = () => {
       )}
 
       {/* ─── Top Selling Courses ─── */}
-      {dashData?.topSellingCourses?.length > 0 && (
+      {chartDataSource?.topSellingCourses?.length > 0 && (
         <div className="admin-card" style={{ marginBottom: 24 }}>
           <div className="admin-card-header">
             <h3>Khóa học bán chạy nhất</h3>
@@ -563,7 +599,7 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dashData.topSellingCourses.map((course, idx) => (
+                  {chartDataSource.topSellingCourses.map((course, idx) => (
                     <tr key={course.courseId} style={{ borderBottom: '1px solid var(--border-light)' }}>
                       <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--text-tertiary)' }}>{idx + 1}</td>
                       <td style={{ padding: '14px 16px' }}>

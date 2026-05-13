@@ -444,6 +444,20 @@ export const adminDashboardService = {
       throw error;
     }
   },
+
+  getReport: async ({ days = 30, year, month } = {}) => {
+    try {
+      const query = new URLSearchParams();
+      if (year) query.append('year', String(year));
+      if (month) query.append('month', String(month));
+      if (!year && !month) query.append('days', String(days));
+      const response = await api.get(`/v1/reports/admin?${query.toString()}`);
+      return { data: response.data?.data || response.data };
+    } catch (error) {
+      console.error('[adminDashboardService.getReport] Error:', error);
+      throw error;
+    }
+  },
 };
 
 // ============ Notification Management (Admin) ============
