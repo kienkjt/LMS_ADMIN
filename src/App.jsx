@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+﻿import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
@@ -70,7 +70,7 @@ const AdminWithdrawals = lazy(
 const AdminNotifications = lazy(
   () => import("./components/admin/AdminNotifications"),
 );
-const AdminOrders = lazy(() => import("./components/admin/AdminOrders"));
+const AdminOrders = lazy(() => import("./components/admin/AdminOrders"));`r`nconst AdminReviews = lazy(() => import("./components/admin/AdminReviews"));
 
 import "./index.css";
 import "./App.css";

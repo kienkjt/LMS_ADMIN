@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
@@ -195,7 +195,15 @@ const getAdminNavItems = () => [
       </svg>
     ),
   },
-  {
+    {
+    path: ROUTES.ADMIN_REVIEWS,
+    label: "Đánh giá",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+      </svg>
+    ),
+  },{
     path: ROUTES.ADMIN_NOTIFICATIONS,
     label: "Thông báo",
     icon: (
@@ -585,4 +593,5 @@ const DashboardLayout = ({ children }) => {
 };
 
 export default DashboardLayout;
+
 

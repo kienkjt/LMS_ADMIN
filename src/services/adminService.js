@@ -1,4 +1,4 @@
-import api from './api';
+﻿import api from './api';
 
 /**
  * Admin Service - Handles all admin-specific API calls
@@ -771,6 +771,45 @@ export const adminOrderService = {
       return { data: response.data?.data || response.data, message: response.data?.message };
     } catch (error) {
       console.error('[adminOrderService.refund] Error:', error);
+      throw error;
+    }
+  },
+};
+
+// ============ Review Management (Admin) ============
+
+export const adminReviewService = {
+  getAll: async (params = {}) => {
+    try {
+      const { page = 0, size = 10 } = params;
+      const queryParams = new URLSearchParams();
+      queryParams.append('page', page);
+      queryParams.append('size', size);
+
+      const response = await api.get(`/v1/admin/reviews?${queryParams.toString()}`);
+      const pageData = response.data?.data || response.data;
+      return {
+        data: {
+          content: pageData?.content || [],
+          pageNumber: pageData?.number ?? pageData?.pageNumber ?? 0,
+          pageSize: pageData?.size ?? pageData?.pageSize ?? 10,
+          totalElements: pageData?.totalElements || 0,
+          totalPages: pageData?.totalPages || 0,
+          isLast: pageData?.last ?? pageData?.isLast ?? true,
+        }
+      };
+    } catch (error) {
+      console.error('[adminReviewService.getAll] Error:', error);
+      throw error;
+    }
+  },
+
+  delete: async (reviewId) => {
+    try {
+      const response = await api.delete(`/v1/admin/reviews/${reviewId}`);
+      return { data: response.data?.data || response.data, message: response.data?.message };
+    } catch (error) {
+      console.error('[adminReviewService.delete] Error:', error);
       throw error;
     }
   },
