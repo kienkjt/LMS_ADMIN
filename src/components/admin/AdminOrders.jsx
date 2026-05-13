@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { adminOrderService } from '../../services/adminService';
 import './Admin.css';
@@ -6,10 +6,10 @@ import './Admin.css';
 const STATUS_OPTIONS = ['', 'PENDING', 'COMPLETED', 'CANCELLED', 'REFUNDED'];
 
 const STATUS_LABEL = {
-  PENDING: 'Ch? thanh toán',
-  COMPLETED: 'Đ? thanh toán',
-  CANCELLED: 'Đ? h?y',
-  REFUNDED: 'Đ? hoàn ti?n',
+  PENDING: 'Chờ thanh toán',
+  COMPLETED: 'Đã thanh toán',
+  CANCELLED: 'Đã hủy',
+  REFUNDED: 'Đã hoàn tiền',
 };
 
 const fmtDate = (value) => {
@@ -42,7 +42,7 @@ const AdminOrders = () => {
       setTotalPages(pageData.totalPages || 0);
       setTotalElements(pageData.totalElements || 0);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Không th? t?i danh sách đơn hàng');
+      toast.error(error.response?.data?.message || 'Không thể tải danh sách đơn hàng');
     } finally {
       setLoading(false);
     }
@@ -56,157 +56,217 @@ const AdminOrders = () => {
   }, [fetchOrders]);
 
   const runRefund = async (order) => {
-    const reason = window.prompt(`Nh?p l? do hoàn ti?n cho đơn ${order.orderCode || order.id}:`);
+    const reason = window.prompt(`Nhập lý do hoàn tiền cho đơn ${order.orderCode || order.id}:`);
     if (reason === null) return;
     if (!reason.trim()) {
-      toast.error('L? do không đư?c đ? tr?ng');
+      toast.error('Lý do không được để trống');
       return;
     }
 
     try {
       setActionLoading(order.id);
       await adminOrderService.refund(order.id, reason.trim());
-      toast.success('Hoàn ti?n thành công');
+      toast.success('Hoàn tiền thành công');
       fetchOrders();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Không th? hoàn ti?n đơn hàng');
+      toast.error(error.response?.data?.message || 'Không thể hoàn tiền đơn hàng');
     } finally {
       setActionLoading('');
     }
   };
 
   const runCancel = async (order) => {
-    const reason = window.prompt(`Nh?p l? do h?y đơn ${order.orderCode || order.id}:`);
+    const reason = window.prompt(`Nhập lý do hủy đơn ${order.orderCode || order.id}:`);
     if (reason === null) return;
     if (!reason.trim()) {
-      toast.error('L? do không đư?c đ? tr?ng');
+      toast.error('Lý do không được để trống');
       return;
     }
 
     try {
       setActionLoading(order.id);
       await adminOrderService.cancel(order.id, reason.trim());
-      toast.success('H?y đơn thành công');
+      toast.success('Hủy đơn thành công');
       fetchOrders();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Không th? h?y đơn hàng');
+      toast.error(error.response?.data?.message || 'Không thể hủy đơn hàng');
     } finally {
       setActionLoading('');
     }
   };
 
   return (
-    <div className="admin-page animate-fade-in">
-      <div className="admin-header">
-        <h2>Qu?n l? đơn hàng</h2>
-        <div style={{ color: 'var(--text-muted)' }}>T?ng: {totalElements}</div>
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <h2 className="admin-page-title">Quản lý đơn hàng</h2>
+          <p className="admin-page-subtitle">Tổng số: {totalElements} đơn hàng</p>
+        </div>
       </div>
 
-      <div className="admin-filters" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
-        <input
-          className="input"
-          placeholder="T?m theo m? đơn, tên ho?c email h?c viên"
-          value={keyword}
-          onChange={(e) => {
-            setKeyword(e.target.value);
-            setPage(0);
-          }}
-        />
-        <select
-          className="input"
-          value={status}
-          onChange={(e) => {
-            setStatus(e.target.value);
-            setPage(0);
-          }}
-        >
-          {STATUS_OPTIONS.map((s) => (
-            <option key={s || 'ALL'} value={s}>
-              {s ? STATUS_LABEL[s] || s : 'T?t c? tr?ng thái'}
-            </option>
-          ))}
-        </select>
+      <div className="admin-toolbar">
+        <div className="admin-search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            className="admin-search-input"
+            placeholder="Tìm theo mã đơn, tên hoặc email học viên..."
+            value={keyword}
+            onChange={(e) => {
+              setKeyword(e.target.value);
+              setPage(0);
+            }}
+          />
+        </div>
+        
+        <div className="admin-filters">
+          <select
+            className="admin-filter-select"
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value);
+              setPage(0);
+            }}
+          >
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s || 'ALL'} value={s}>
+                {s ? STATUS_LABEL[s] || s : 'Tất cả trạng thái'}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div className="admin-table-wrap" style={{ marginTop: 16 }}>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>M? đơn</th>
-              <th>H?c viên</th>
-              <th>T?ng ti?n</th>
-              <th>Tr?ng thái</th>
-              <th>Ngày t?o</th>
-              <th>Hành đ?ng</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      <div className="admin-card">
+        <div className="admin-table-wrapper">
+          <table className="data-table admin-table">
+            <thead>
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center' }}>Đang t?i...</td>
+                <th>MÃ ĐƠN</th>
+                <th>HỌC VIÊN</th>
+                <th>TỔNG TIỀN</th>
+                <th>TRẠNG THÁI</th>
+                <th>NGÀY TẠO</th>
+                <th className="text-center">HÀNH ĐỘNG</th>
               </tr>
-            ) : orders.length === 0 ? (
-              <tr>
-                <td colSpan={6} style={{ textAlign: 'center' }}>Không có d? li?u</td>
-              </tr>
-            ) : (
-              orders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.orderCode || order.id}</td>
-                  <td>
-                    <div>{order.studentName || '-'}</div>
-                    <small style={{ color: 'var(--text-muted)' }}>{order.studentEmail || '-'}</small>
-                  </td>
-                  <td>{fmtMoney(order.finalAmount || order.totalAmount)}</td>
-                  <td>{STATUS_LABEL[order.status] || order.status || '-'}</td>
-                  <td>{fmtDate(order.createdAt)}</td>
-                  <td>
-                    {order.status === 'PENDING' && (
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => runCancel(order)}
-                        disabled={actionLoading === order.id}
-                      >
-                        H?y
-                      </button>
-                    )}
-                    {order.status === 'COMPLETED' && (
-                      <button
-                        className="btn btn-warning btn-sm"
-                        onClick={() => runRefund(order)}
-                        disabled={actionLoading === order.id}
-                      >
-                        Hoàn ti?n
-                      </button>
-                    )}
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={6}>
+                    <div className="admin-loading-inline">
+                      <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                      Đang tải dữ liệu...
+                    </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : orders.length === 0 ? (
+                <tr>
+                  <td colSpan={6}>
+                    <div className="admin-empty-state">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                      </svg>
+                      <p>Không tìm thấy đơn hàng nào</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>
+                      <span className="admin-account-num">{order.orderCode || order.id}</span>
+                    </td>
+                    <td>
+                      <div className="admin-user-cell">
+                        <div className="admin-list-avatar">
+                          {(order.studentName || 'U')[0].toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="admin-category-name">{order.studentName || '-'}</div>
+                          <div className="admin-cell-desc">{order.studentEmail || '-'}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="admin-amount">{fmtMoney(order.finalAmount || order.totalAmount)}</span>
+                    </td>
+                    <td>
+                      <span style={{ 
+                        padding: '4px 10px', 
+                        borderRadius: '20px', 
+                        fontSize: '12px', 
+                        fontWeight: 600,
+                        backgroundColor: order.status === 'COMPLETED' ? 'var(--success-alpha)' : order.status === 'PENDING' ? 'var(--warning-alpha)' : order.status === 'CANCELLED' ? 'var(--error-alpha)' : 'var(--bg-tertiary)',
+                        color: order.status === 'COMPLETED' ? 'var(--success-dark)' : order.status === 'PENDING' ? 'var(--warning-dark)' : order.status === 'CANCELLED' ? 'var(--error-dark)' : 'var(--text-secondary)'
+                      }}>
+                        {STATUS_LABEL[order.status] || order.status || '-'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="admin-cell-desc">{fmtDate(order.createdAt)}</div>
+                    </td>
+                    <td>
+                      <div className="admin-actions" style={{ justifyContent: 'center' }}>
+                        {order.status === 'PENDING' && (
+                          <button
+                            className="admin-action-btn reject"
+                            title="Hủy đơn"
+                            onClick={() => runCancel(order)}
+                            disabled={actionLoading === order.id}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                          </button>
+                        )}
+                        {order.status === 'COMPLETED' && (
+                          <button
+                            className="admin-action-btn edit"
+                            title="Hoàn tiền"
+                            onClick={() => runRefund(order)}
+                            disabled={actionLoading === order.id}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="admin-pagination" style={{ marginTop: 16 }}>
-        <button
-          className="btn btn-outline btn-sm"
-          disabled={page <= 0}
-          onClick={() => setPage((p) => Math.max(0, p - 1))}
-        >
-          Trang trư?c
-        </button>
-        <span>Trang {page + 1} / {Math.max(1, totalPages)}</span>
-        <button
-          className="btn btn-outline btn-sm"
-          disabled={page >= Math.max(0, totalPages - 1)}
-          onClick={() => setPage((p) => Math.min(Math.max(0, totalPages - 1), p + 1))}
-        >
-          Trang sau
-        </button>
+        {totalPages > 0 && (
+          <div className="admin-pagination">
+            <button
+              className="admin-page-btn"
+              disabled={page <= 0}
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+            >
+              Trang trước
+            </button>
+            <div className="admin-page-numbers">
+              <span className="admin-page-btn active">{page + 1}</span>
+              <span className="admin-page-ellipsis">/</span>
+              <span className="admin-page-btn">{Math.max(1, totalPages)}</span>
+            </div>
+            <button
+              className="admin-page-btn"
+              disabled={page >= Math.max(0, totalPages - 1)}
+              onClick={() => setPage((p) => Math.min(Math.max(0, totalPages - 1), p + 1))}
+            >
+              Trang sau
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default AdminOrders;
-

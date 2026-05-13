@@ -445,11 +445,20 @@
   overflow-x: auto;
 }
 
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
 .admin-table th {
   font-size: 11px;
   padding: 12px 16px;
   background: var(--bg-tertiary);
   white-space: nowrap;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .admin-table td {
