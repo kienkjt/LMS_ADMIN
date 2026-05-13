@@ -70,8 +70,8 @@ const AdminWithdrawals = lazy(
 const AdminNotifications = lazy(
   () => import("./components/admin/AdminNotifications"),
 );
-const AdminOrders = lazy(() => import("./components/admin/AdminOrders"));`r`nconst AdminReviews = lazy(() => import("./components/admin/AdminReviews"));
-
+const AdminOrders = lazy(() => import("./components/admin/AdminOrders"));
+const AdminReviews = lazy(() => import("./components/admin/AdminReviews"));
 import "./index.css";
 import "./App.css";
 
