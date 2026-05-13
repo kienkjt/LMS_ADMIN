@@ -5,6 +5,34 @@ import { ROUTES } from '../../utils/constants';
 import { adminDashboardService, adminCourseService, adminWithdrawalService } from '../../services/adminService';
 import './Admin.css';
 const formatChartDateLabel = (label) => (label || '').toString().slice(5);
+const toDateKey = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toISOString().slice(0, 10);
+};
+
+const buildLast30DaysSeries = (series = [], valueField = 'amount') => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const sourceByDate = new Map();
+
+  (Array.isArray(series) ? series : []).forEach((item) => {
+    const key = toDateKey(item?.date || item?.label);
+    if (!key) return;
+    sourceByDate.set(key, Number(item?.[valueField] || item?.amount || item?.count || 0));
+  });
+
+  return Array.from({ length: 30 }, (_, index) => {
+    const day = new Date(today);
+    day.setDate(today.getDate() - (29 - index));
+    const key = day.toISOString().slice(0, 10);
+    return {
+      label: key,
+      [valueField]: sourceByDate.get(key) ?? 0,
+    };
+  });
+};
 
 // ─── Simple Bar/Line Chart Component ───
 const MiniChart = ({ data = [], type = 'bar', color = '#7c3aed', height = 120 }) => {
@@ -372,6 +400,8 @@ const AdminDashboard = () => {
     averageOrderValue: dashData?.averageOrderValue ?? 0,
   };
   const chartDataSource = reportData || dashData;
+  const last30DaysRevenue = buildLast30DaysSeries(chartDataSource?.dailyRevenue, 'amount');
+  const last30DaysEnrollments = buildLast30DaysSeries(chartDataSource?.dailyEnrollments, 'count');
 
   return (
     <div className="admin-dashboard">
@@ -530,25 +560,25 @@ const AdminDashboard = () => {
       {chartDataSource && (
         <div className="admin-dashboard-grid" style={{ marginBottom: 24 }}>
           {/* Daily Revenue Chart */}
-          {chartDataSource.dailyRevenue?.length > 0 && (
+          {last30DaysRevenue.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
                 <h3>Doanh thu hàng ngày</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
-                <TimeSeriesRevenueChart data={chartDataSource.dailyRevenue} height={220} />
+                <TimeSeriesRevenueChart data={last30DaysRevenue} height={220} />
               </div>
             </div>
           )}
 
           {/* Daily Enrollments Chart */}
-          {chartDataSource.dailyEnrollments?.length > 0 && (
+          {last30DaysEnrollments.length > 0 && (
             <div className="admin-card">
               <div className="admin-card-header">
                 <h3>Ghi danh hàng ngày</h3>
               </div>
               <div className="admin-card-body" style={{ padding: '16px 20px' }}>
-                <EnrollmentMiniChart data={chartDataSource.dailyEnrollments} height={160} />
+                <EnrollmentMiniChart data={last30DaysEnrollments} height={160} />
               </div>
             </div>
           )}
