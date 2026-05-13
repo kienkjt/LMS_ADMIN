@@ -33,29 +33,26 @@ const ForgotPassword = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-hero">
-        <div className="auth-hero-content">
-          <div className="auth-logo">
-            <div className="logo-icon-lg">E</div>
-            <span className="logo-text-lg">LMS</span>
-          </div>
-          <div
-            style={{ fontSize: "80px", textAlign: "center", margin: "32px 0" }}
-          >
-            <FiKey size={80} />
-          </div>
-          <h1>Khôi phục mật khẩu</h1>
-          <p>
-            Đừng lo lắng! Chúng tôi sẽ giúp bạn lấy lại quyền truy cập tài khoản
-            một cách an toàn.
-          </p>
-        </div>
-      </div>
-
       <div className="auth-form-panel">
         <div className="auth-form-container animate-fade-in">
-          <div className="auth-form-header">
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>
+          <div className="auth-form-header" style={{ textAlign: "center" }}>
+            <Link
+              to={ROUTES.HOME}
+              className="auth-logo"
+              style={{ justifyContent: "center", marginBottom: "20px" }}
+            >
+              <div className="logo-icon-lg">E</div>
+              <span className="logo-text-lg" style={{ color: "#0f172a" }}>
+                LMS
+              </span>
+            </Link>
+            <div
+              style={{
+                fontSize: "48px",
+                marginBottom: "16px",
+                color: "var(--primary)",
+              }}
+            >
               <FiLock size={48} />
             </div>
             <h2>Quên mật khẩu?</h2>
@@ -72,7 +69,7 @@ const ForgotPassword = () => {
                 Email <span>*</span>
               </label>
               <div className="input-wrapper">
-                <span className="input-icon">✉️</span>
+                {/* <span className="input-icon">✉️</span> */}
                 <input
                   id="forgot-email"
                   type="email"

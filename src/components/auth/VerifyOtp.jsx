@@ -123,35 +123,32 @@ const VerifyOtp = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-hero">
-        <div className="auth-hero-content">
-          <div className="auth-logo">
-            <div className="logo-icon-lg">E</div>
-            <span className="logo-text-lg">LMS</span>
-          </div>
-          <div
-            style={{ fontSize: "80px", textAlign: "center", margin: "32px 0" }}
-          >
-            <FiMail size={80} />
-          </div>
-          <h1>Xác thực tài khoản</h1>
-          <p>
-            Chúng tôi đã gửi mã xác thực 6 chữ số đến email của bạn. Vui lòng
-            kiểm tra hộp thư đến.
-          </p>
-        </div>
-      </div>
-
       <div className="auth-form-panel">
         <div className="auth-form-container animate-fade-in">
-          <div className="auth-form-header">
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>
+          <div className="auth-form-header" style={{ textAlign: "center" }}>
+            <Link
+              to={ROUTES.HOME}
+              className="auth-logo"
+              style={{ justifyContent: "center", marginBottom: "20px" }}
+            >
+              <div className="logo-icon-lg">E</div>
+              <span className="logo-text-lg" style={{ color: "#0f172a" }}>
+                LMS
+              </span>
+            </Link>
+            <div
+              style={{
+                fontSize: "48px",
+                marginBottom: "16px",
+                color: "var(--primary)",
+              }}
+            >
               <FiLock size={48} />
             </div>
             <h2>Nhập mã OTP</h2>
             {email && (
               <p>
-                Mã được gửi đến{" "}
+                Mã xác thực đã được gửi đến{" "}
                 <strong style={{ color: "var(--text-primary)" }}>
                   {email}
                 </strong>

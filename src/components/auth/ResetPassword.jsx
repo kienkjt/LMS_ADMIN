@@ -78,7 +78,7 @@ const ResetPassword = () => {
       <div className="auth-hero">
         <div className="auth-hero-content">
           <div className="auth-logo">
-            <div className="logo-icon-lg">E</div>
+            <div className="logo-icon-lg">L</div>
             <span className="logo-text-lg">LMS</span>
           </div>
           <div
