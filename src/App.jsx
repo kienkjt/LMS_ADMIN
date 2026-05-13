@@ -453,6 +453,18 @@ function App() {
                 }
               />
               <Route
+              <Route
+                path={ROUTES.ADMIN_REVIEWS}
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+                    <WithDashboard>
+                      <Suspense fallback={<PageLoader />}>
+                        <AdminReviews />
+                      </Suspense>
+                    </WithDashboard>
+                  </ProtectedRoute>
+                }
+              />
                 path={ROUTES.ADMIN_PROFILE}
                 element={
                   <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
