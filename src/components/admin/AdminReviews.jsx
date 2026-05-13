@@ -1,7 +1,8 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { adminReviewService } from '../../services/adminService';
-import './Admin.css';
+﻿import React, { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { adminReviewService } from "../../services/adminService";
+import { courseService } from "../../services/courseService";
+import "./Admin.css";
 
 const AdminReviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -12,16 +13,44 @@ const AdminReviews = () => {
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const [courseNames, setCourseNames] = useState({});
 
   const fetchReviews = useCallback(async () => {
     setLoading(true);
     try {
       const res = await adminReviewService.getAll({ page, size });
-      setReviews(res.data.content || []);
+      const reviewsData = res.data.content || [];
+      setReviews(reviewsData);
       setTotalPages(res.data.totalPages || 0);
       setTotalElements(res.data.totalElements || 0);
+
+      // Fetch course names for all unique courseIds
+      const uniqueCourseIds = [
+        ...new Set(reviewsData.map((r) => r.courseId).filter(Boolean)),
+      ];
+
+      for (const courseId of uniqueCourseIds) {
+        if (!courseNames[courseId]) {
+          try {
+            const courseRes = await courseService.getById(courseId);
+            setCourseNames((prev) => ({
+              ...prev,
+              [courseId]:
+                courseRes.data?.title || courseRes.data?.name || courseId,
+            }));
+          } catch (err) {
+            console.error(`Failed to fetch course name for ${courseId}:`, err);
+            setCourseNames((prev) => ({
+              ...prev,
+              [courseId]: courseId,
+            }));
+          }
+        }
+      }
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Không thể tải danh sách đánh giá');
+      toast.error(
+        error?.response?.data?.message || "Không thể tải danh sách đánh giá",
+      );
     } finally {
       setLoading(false);
     }
@@ -32,14 +61,14 @@ const AdminReviews = () => {
   }, [fetchReviews]);
 
   const handleDeleteReview = async (review) => {
-    if (!window.confirm('Xóa đánh giá vi phạm này?')) {
+    if (!window.confirm("Xóa đánh giá vi phạm này?")) {
       return;
     }
 
     setDeletingId(review.id);
     try {
       await adminReviewService.delete(review.id);
-      toast.success('Đã xóa đánh giá');
+      toast.success("Đã xóa đánh giá");
 
       if (reviews.length === 1 && page > 0) {
         setPage((prev) => prev - 1);
@@ -47,20 +76,20 @@ const AdminReviews = () => {
         fetchReviews();
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Không thể xóa đánh giá');
+      toast.error(error?.response?.data?.message || "Không thể xóa đánh giá");
     } finally {
       setDeletingId(null);
     }
   };
 
   const formatDateTime = (date) => {
-    if (!date) return '—';
-    return new Date(date).toLocaleString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    if (!date) return "—";
+    return new Date(date).toLocaleString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -69,11 +98,13 @@ const AdminReviews = () => {
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Quản lý đánh giá</h1>
-          <p className="admin-page-subtitle">Xóa các đánh giá vi phạm trên hệ thống</p>
+          <p className="admin-page-subtitle">
+            Xóa các đánh giá vi phạm trên hệ thống
+          </p>
         </div>
       </div>
 
-      <div className="admin-toolbar-info" style={{ marginBottom: '16px' }}>
+      <div className="admin-toolbar-info" style={{ marginBottom: "16px" }}>
         Tổng: <strong>{totalElements}</strong> đánh giá
       </div>
 
@@ -104,11 +135,17 @@ const AdminReviews = () => {
                 {reviews.map((review) => (
                   <tr key={review.id}>
                     <td>
-                      <div style={{ fontWeight: 600 }}>{review.studentName || 'Unknown'}</div>
+                      <div style={{ fontWeight: 600 }}>
+                        {review.studentName || "Unknown"}
+                      </div>
                     </td>
-                    <td style={{ maxWidth: 260, wordBreak: 'break-word' }}>{review.courseId || '—'}</td>
+                    <td style={{ maxWidth: 260, wordBreak: "break-word" }}>
+                      {courseNames[review.courseId] || review.courseId || "—"}
+                    </td>
                     <td>{review.rating || 0}/5</td>
-                    <td style={{ maxWidth: 360, wordBreak: 'break-word' }}>{review.comment || '—'}</td>
+                    <td style={{ maxWidth: 360, wordBreak: "break-word" }}>
+                      {review.comment || "—"}
+                    </td>
                     <td>{formatDateTime(review.createdAt)}</td>
                     <td>
                       <button
@@ -117,7 +154,7 @@ const AdminReviews = () => {
                         disabled={deletingId === review.id}
                         title="Xóa đánh giá vi phạm"
                       >
-                        {deletingId === review.id ? '...' : 'Xóa'}
+                        {deletingId === review.id ? "..." : "Xóa"}
                       </button>
                     </td>
                   </tr>
@@ -129,13 +166,21 @@ const AdminReviews = () => {
 
         {totalPages > 1 && (
           <div className="admin-pagination">
-            <button className="admin-page-btn" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+            <button
+              className="admin-page-btn"
+              disabled={page === 0}
+              onClick={() => setPage((p) => p - 1)}
+            >
               ← Trước
             </button>
-            <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>
+            <span style={{ fontSize: "13px", color: "var(--text-tertiary)" }}>
               Trang {page + 1} / {totalPages}
             </span>
-            <button className="admin-page-btn" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+            <button
+              className="admin-page-btn"
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage((p) => p + 1)}
+            >
               Sau →
             </button>
           </div>
