@@ -70,6 +70,7 @@ const AdminWithdrawals = lazy(
 const AdminNotifications = lazy(
   () => import("./components/admin/AdminNotifications"),
 );
+const AdminOrders = lazy(() => import("./components/admin/AdminOrders"));
 
 import "./index.css";
 import "./App.css";
@@ -434,6 +435,18 @@ function App() {
                     <WithDashboard>
                       <Suspense fallback={<PageLoader />}>
                         <AdminNotifications />
+                      </Suspense>
+                    </WithDashboard>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_ORDERS}
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+                    <WithDashboard>
+                      <Suspense fallback={<PageLoader />}>
+                        <AdminOrders />
                       </Suspense>
                     </WithDashboard>
                   </ProtectedRoute>

@@ -651,3 +651,102 @@ export const adminTeacherService = {
     }
   },
 };
+
+// ============ Order Management (Admin) ============
+
+export const adminOrderService = {
+  /**
+   * Get admin orders with filters
+   * GET /v1/admin/orders
+   */
+  list: async (params = {}) => {
+    try {
+      const {
+        keyword,
+        status,
+        minAmount,
+        maxAmount,
+        fromDate,
+        toDate,
+        page = 0,
+        size = 10,
+      } = params;
+
+      const queryParams = new URLSearchParams();
+      if (keyword) queryParams.append('keyword', keyword);
+      if (status) queryParams.append('status', status);
+      if (minAmount !== undefined && minAmount !== '') queryParams.append('minAmount', minAmount);
+      if (maxAmount !== undefined && maxAmount !== '') queryParams.append('maxAmount', maxAmount);
+      if (fromDate) queryParams.append('fromDate', fromDate);
+      if (toDate) queryParams.append('toDate', toDate);
+      queryParams.append('page', page);
+      queryParams.append('size', size);
+
+      const response = await api.get(`/v1/admin/orders?${queryParams.toString()}`);
+      return { data: response.data?.data || response.data };
+    } catch (error) {
+      console.error('[adminOrderService.list] Error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get order detail by id
+   * GET /v1/admin/orders/{orderId}
+   */
+  getById: async (orderId) => {
+    try {
+      const response = await api.get(`/v1/admin/orders/${orderId}`);
+      return { data: response.data?.data || response.data };
+    } catch (error) {
+      console.error('[adminOrderService.getById] Error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update order status
+   * PUT /v1/admin/orders/{orderId}/status
+   */
+  updateStatus: async (orderId, payload) => {
+    try {
+      const response = await api.put(`/v1/admin/orders/${orderId}/status`, payload);
+      return { data: response.data?.data || response.data, message: response.data?.message };
+    } catch (error) {
+      console.error('[adminOrderService.updateStatus] Error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Cancel order (admin)
+   * POST /v1/admin/orders/{orderId}/cancel?reason=...
+   */
+  cancel: async (orderId, reason) => {
+    try {
+      const response = await api.post(
+        `/v1/admin/orders/${orderId}/cancel?reason=${encodeURIComponent(reason)}`
+      );
+      return { data: response.data?.data || response.data, message: response.data?.message };
+    } catch (error) {
+      console.error('[adminOrderService.cancel] Error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Refund order (admin)
+   * POST /v1/admin/orders/{orderId}/refund?reason=...
+   */
+  refund: async (orderId, reason) => {
+    try {
+      const response = await api.post(
+        `/v1/admin/orders/${orderId}/refund?reason=${encodeURIComponent(reason)}`
+      );
+      return { data: response.data?.data || response.data, message: response.data?.message };
+    } catch (error) {
+      console.error('[adminOrderService.refund] Error:', error);
+      throw error;
+    }
+  },
+};
