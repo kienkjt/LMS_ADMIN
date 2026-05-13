@@ -22,7 +22,8 @@ const MiniChart = ({ data = [], type = 'bar', color = '#7c3aed', height = 120 })
     ctx.clearRect(0, 0, rect.width, rect.height);
 
     const values = data.map(d => Number(d.amount || d.count || 0));
-    const maxVal = Math.max(...values, 1);
+    const rawMaxVal = Math.max(...values, 1);
+    const maxVal = type === 'line' ? rawMaxVal * 1.2 : rawMaxVal;
     const padding = { top: 10, bottom: 24, left: 8, right: 8 };
     const chartW = rect.width - padding.left - padding.right;
     const chartH = rect.height - padding.top - padding.bottom;
@@ -104,7 +105,7 @@ const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
   const areaPoints = `0,100 ${linePoints} 100,100`;
 
   return (
-    <div className="timeseries-chart-card">
+    <div className="timeseries-chart-card enrollment-chart-card">
       <div className="timeseries-chart-kpis">
         <div><span>Tổng</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}</strong></div>
         <div><span>Cao nhất</span><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(maxVal)}</strong></div>
@@ -143,9 +144,9 @@ const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
         ))}
       </div>
       <div className="chart-meta-row">
-        <span className="chart-axis-label">Truc tung: Doanh thu (VND)</span>
+        <span className="chart-axis-label">Đơn vị: VND</span>
         <span className="chart-legend"><span className="chart-legend-dot revenue"></span>Doanh thu</span>
-        <span className="chart-axis-label">Truc hoanh: Ngay</span>
+        <span className="chart-axis-label">Theo ngày</span>
       </div>
     </div>
   );
@@ -154,8 +155,10 @@ const TimeSeriesRevenueChart = ({ data = [], height = 220 }) => {
 const EnrollmentMiniChart = ({ data = [], height = 160 }) => {
   if (!Array.isArray(data) || data.length === 0) return null;
   const values = data.map((d) => Number(d.count || d.amount || 0));
-  const maxVal = Math.max(...values, 1);
-  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((rate) => Math.round(maxVal * rate)).reverse();
+  const maxVal = Math.max(...values, 1) * 1.2;
+  const yTicks = [0, 0.25, 0.5, 0.75, 1]
+    .map((rate) => Math.round(maxVal * rate))
+    .reverse();
 
   return (
     <div className="timeseries-chart-card">
@@ -170,9 +173,9 @@ const EnrollmentMiniChart = ({ data = [], height = 160 }) => {
         </div>
       </div>
       <div className="chart-meta-row">
-        <span className="chart-axis-label">Truc tung: So ghi danh</span>
+        <span className="chart-axis-label">Đơn vị: lượt ghi danh</span>
         <span className="chart-legend"><span className="chart-legend-dot enrollment"></span>Ghi danh</span>
-        <span className="chart-axis-label">Truc hoanh: Ngay</span>
+        <span className="chart-axis-label">Theo ngày</span>
       </div>
     </div>
   );
